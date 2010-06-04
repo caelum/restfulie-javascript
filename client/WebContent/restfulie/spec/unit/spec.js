@@ -32,7 +32,7 @@ describe 'Result Serializers'
 	
 		it 'accept should be application/json'
 			parser.accept('application/json').should.be_true;
-		end
+		end 
 		
 		it 'convert text format json in object'
 			r  = parser.unparse('{"price":40}');
