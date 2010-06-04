@@ -1,4 +1,4 @@
-h1. Restfulie Python
+h1. Restfulie Javascript
 
 Restfulie javascript port is in its earlier stages. Wait a while for some extra information and docs.
 
