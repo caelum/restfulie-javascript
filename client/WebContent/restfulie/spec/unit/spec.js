@@ -16,15 +16,14 @@ describe 'Restfulie'
     end
     
     it 'post resource'
-			x = Restfulie.at("fixtures/basket.json").accepts('application/json').get();
-    	x.price=10
+		x = {'price':11};
     	result = Restfulie.at("fixtures/basket.json").as("application/json").post(x);
     	result.toString().should.not.be_null;
     end
   end
 end
 
-
+ 
 describe 'Result Serializers'
 	describe 'JSON Serializer'
 	 	before_each  
@@ -33,7 +32,7 @@ describe 'Result Serializers'
 	
 		it 'accept should be application/json'
 			parser.accept('application/json').should.be_true;
-		end
+		end 
 		
 		it 'convert text format json in object'
 			r  = parser.unparse('{"price":40}');
