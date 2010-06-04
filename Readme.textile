@@ -1,0 +1,17 @@
+h1. Restfulie Python
+
+Restfulie javascript port is in its earlier stages. Wait a while for some extra information and docs.
+
+Meanwhile visit "Restfulie's website":http://restfulie.caelumobjects.com
+
+h1. How to install
+
+h2. A simple get
+
+h2. A simple post
+
+h1. How to build
+
+h1. License
+
+Restfulie is licensed under the Apache License, Version 2.0.
