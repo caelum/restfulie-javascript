@@ -23,7 +23,7 @@ describe 'Restfulie'
   end
 end
 
-
+ 
 describe 'Result Serializers'
 	describe 'JSON Serializer'
 	 	before_each  
