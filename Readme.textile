@@ -6,11 +6,25 @@ Meanwhile visit "Restfulie's website":http://restfulie.caelumobjects.com
 
 h1. How to install
 
+To use the restfulie you need to import the libraries listed in the  
+\webContent\restfulie\lib.
+
+<script src="../../restfulie/lib/restfulie.js"></script>
+<script src="../../restfulie/lib/json2.js"></script>
+<script src="../../restfulie/lib/jquery-1.4.2.min.js"></script>
+<script src="../../restfulie/lib/jquery.xml2json.js"></script>
+
 h2. A simple get
 
+resource = Restfulie.at(url).accepts('application/json').get();
+
 h2. A simple post
+	
+	x = {'price':11};
+    	result = Restfulie.at(url).as("application/json").post(x);
 
 h1. How to build
+
 
 h1. License
 
