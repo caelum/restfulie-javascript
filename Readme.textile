@@ -23,8 +23,6 @@ h2. A simple post
 	x = {'price':11};
     	result = Restfulie.at(url).as("application/json").post(x);
 
-h1. How to build
-
 
 h1. License
 
