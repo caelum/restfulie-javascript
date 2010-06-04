@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+		<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+		<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+		<link type="text/css" rel="stylesheet" href="../../jspec/lib/jspec.css" />
+		<script src="../../jspec/lib/jspec.js"></script>
+		<script src="../../jspec/lib/jspec.xhr.js"></script>
+		<script src="../../restfulie/lib/restfulie.js"></script>
+		<script src="../../restfulie/lib/json2.js"></script>
+		<script src="../../restfulie/lib/jquery-1.4.2.min.js"></script>
+		<script src="../../restfulie/lib/jquery.xml2json.js"></script>
+		<script src="../../restfulie/spec/unit/spec.helper.js"></script>
+		<script>
+			function runSuites() {
+				JSpec 
+				.exec('../../restfulie/spec/unit/spec.js')
+				.run({ fixturePath: 'fixtures' })
+				.report()
+			}
+		</script>
+	</head>
+		<body class="jspec" onLoad="runSuites();">
+		<div id="jspec-top"><h2 id="jspec-title">JSpec <em><script>document.write(JSpec.version)</script></em></h2></div>
+		<div id="jspec"></div>
+		<div id="jspec-bottom"></div>
+	
+	</body>
+</html>

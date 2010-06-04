@@ -1,0 +1,7 @@
+{
+	"price":40.0,
+	"link":[
+		{"href":"http://localhost:3000/baskets/1/payments","rel":"payment","type":"application/json"},
+		{"href":"http://localhost:3000/baskets/1","rel":"self","type":"application/json"}
+	]
+}
