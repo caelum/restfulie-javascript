@@ -7,7 +7,7 @@ Restfulie = {
 	at : function(uri) {
 	  return new EntryPointService(uri);
 	}
-}
+};
 
 
 /**
@@ -19,58 +19,57 @@ Restfulie = {
 * @param accept
 * @return
 */
-function ajax(method,uri,content,header){
-	return jQuery.ajax({
-		beforeSend: function(xhrObj){
-			if (header['Accept'])
-				xhrObj.setRequestHeader("Accept",header['Accept']);
-			if (header['Content-Type'])
-				xhrObj.setRequestHeader("Content-Type",header['Content-Type']);
-			return xhrObj;
-		},
-		data:content,
-		type: method,
-		url: uri,
-		async: false
-	});
-}
+AjaxRequest = {
+		ajax : function(method,uri,content,headers){
+		return jQuery.ajax({
+			beforeSend: function(xhrObj){
+				
+				for (var x in headers)
+					xhrObj.setRequestHeader(x,headers[x]);
+				
+				return xhrObj;
+			},
+			data:content,
+			type: method,
+			url: uri,
+			async: false
+		});
+	}
+};
 
-/** 
- * entry point 
- * 
- * @param uri
- * @return
- */
- 
 
 /**
  * Classe que serve como ponto de entrada para os recursos
  */
 function EntryPointService(uri) {
 	this.uri = uri;
+	this.headers = {
+			"Accept":"application/json",
+			"Content-Type":"application/json"
+	};
 	this.accept = "application/json";
 	this.contentType = "application/json";
 
 	this.accepts = function(accept){
-		this.accept = accept;
+		this.headers["Accept"] = accept;
 		return this;
 	}
 	
 	this.as = function(contentType){
-		this.contentType = contentType;
+		this.headers["Content-Type"] = contentType;
 		return this;
 	}
 	
 	this.get = function(){
 		var accept = this.accept; 
-		var xhr = ajax("GET",this.uri,'',{'Content-Type':this.contentType,'Accept': this.accept});
+		var xhr = AjaxRequest.ajax("GET",this.uri,'',this.headers);
 		return new SerializerXHRStrategy().serialize(xhr,this); 
 	}
 	
 	this.post = function(object){
 		var backup = object.response;
 		delete object.response; 
-		var xhr = ajax("POST",this.uri,new SerializerResultStrategy(this.accept).parse(object),{'Content-Type':this.contentType,'Accept': this.accept});
+		var xhr = AjaxRequest.ajax("POST",this.uri,new SerializerResultStrategy(this.accept).parse(object),this.headers);
 		return new SerializerXHRStrategy().serialize(xhr, this);
 	}
 }
@@ -119,9 +118,8 @@ function SucessXHRSerializer(){
 				body:xhr.responseText,
 				code:xhr.status
 		};
-		return result;
+		return result;	
 	}
-	
 }
 
 
