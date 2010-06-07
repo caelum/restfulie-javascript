@@ -2,11 +2,11 @@
 cd client/restfulie
 
 cd spec
-ruby server.rb &
+ruby start_server.rb &
 SINATRA=$!
 cd ..
 
-jspec run --browsers ff &
+jspec run --server --browsers safari &
 JSPEC_PID=$!
 while [ ! -f finished ]; do
 	sleep 1
