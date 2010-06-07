@@ -74,9 +74,10 @@ function EntryPointService(uri) {
 		delete object.response; 
 		var content = new SerializerResultStrategy(this.headers['Content-Type']).parse(object);
 		var xhr = AjaxRequest.ajax("POST",this.uri,content,this.headers);
+		object.response = backup;
 		var resource = new SerializerXHRStrategy().serialize(xhr);
 		return resource;
-	}
+	} 
 }
  
 /**
@@ -84,15 +85,13 @@ function EntryPointService(uri) {
  * @return
  */
 function SerializerXHRStrategy(){
-	
+	var serializers = {
+		 '200' : new SucessXHRSerializer()
+		,'201' : new RedirectXHRSerializer()
+	};
 	this.serialize = function(xhr){
-		var serializer = new DefaultXHRSerializer();
-		if (xhr.status == 200){
-			serializer = new SucessXHRSerializer();
-		} else if (xhr.status == 201){
-			serializer = new RedirectXHRSerializer();
-		}
-		
+		var serializer = serializers[xhr.status];
+		if (serializer == null) serializer = new DefaultXHRSerializer();
 		return serializer.serialize(xhr);
 	}
 }

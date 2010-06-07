@@ -1,4 +1,3 @@
- 
 describe 'Restfulie'
   describe 'client services'
     it 'get resource at success'
