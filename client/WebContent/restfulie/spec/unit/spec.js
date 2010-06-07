@@ -16,10 +16,16 @@ describe 'Restfulie'
     end
     
     it 'post resource'
-		x = {'price':11};
-    	result = Restfulie.at("basket.json").as("application/json").post(x);
-    	result.toString().should.not.be_null;
+    	x = Restfulie.at("atualiza").as("application/json").post({"id":1});
+    	x.toString().should.not.be_null;
     end
+    
+    it 'support follow 201 response'
+    	x = Restfulie.at("basket.json").post({'data':2});
+    	x.id.should.equal(4);
+		x.response.code.should.equal 200     	
+    end
+    
   end
 end
 
