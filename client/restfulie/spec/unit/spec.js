@@ -1,25 +1,30 @@
- 
 describe 'Restfulie'
   describe 'client services'
     it 'get resource at success'
-    	x = Restfulie.at("fixtures/basket.json").accepts('application/json').get();
+    	x = Restfulie.at("basket.json").accepts('application/json').get();
     	x.price.should.equal 40
     	x.response.body.should.not.be_null
     	x.response.code.should.equal 200
     end
     
     it 'get resource at with error'
-    	x = Restfulie.at("/error").get();
+    	x = Restfulie.at("error").get();
     	x.should.not.be_null
     	x.toString().should.equal x.response.body
     	x.response.code.should.not.equal 200
     end
     
     it 'post resource'
-		x = {'price':11};
-    	result = Restfulie.at("fixtures/basket.json").as("application/json").post(x);
-    	result.toString().should.not.be_null;
+    	x = Restfulie.at("atualiza").as("application/json").post({"id":1});
+    	x.toString().should.not.be_null;
     end
+    
+    it 'support follow 201 response'
+    	x = Restfulie.at("basket.json").post({'data':2});
+    	x.id.should.equal(4);
+		x.response.code.should.equal 200     	
+    end
+    
   end
 end
 

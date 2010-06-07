@@ -7,7 +7,7 @@ Restfulie = {
 	at : function(uri) {
 	  return new EntryPointService(uri);
 	}
-}
+};
 
 
 /**
@@ -19,60 +19,65 @@ Restfulie = {
 * @param accept
 * @return
 */
-function ajax(method,uri,content,header){
-	return jQuery.ajax({
-		beforeSend: function(xhrObj){
-			if (header['Accept'])
-				xhrObj.setRequestHeader("Accept",header['Accept']);
-			if (header['Content-Type'])
-				xhrObj.setRequestHeader("Content-Type",header['Content-Type']);
-			return xhrObj;
-		},
-		data:content,
-		type: method,
-		url: uri,
-		async: false
-	});
-}
+AjaxRequest = {
+		ajax : function(method,uri,content,headers){
+		return jQuery.ajax({
+			beforeSend: function(xhrObj){
+				
+				for (var x in headers)
+					xhrObj.setRequestHeader(x,headers[x]);
+				
+				return xhrObj;
+			},
+			data:content,
+			type: method,
+			url: uri,
+			async: false
+		});
+	}
+};
 
-/** 
- * entry point 
- * 
- * @param uri
- * @return
- */
- 
 
 /**
  * Classe que serve como ponto de entrada para os recursos
+ * 
+ * permite a execução dos metodos get e post
  */
 function EntryPointService(uri) {
 	this.uri = uri;
+	this.headers = {
+			"Accept":"application/json",
+			"Content-Type":"application/json"
+	};
+	
 	this.accept = "application/json";
 	this.contentType = "application/json";
 
 	this.accepts = function(accept){
-		this.accept = accept;
+		this.headers["Accept"] = accept;
 		return this;
 	}
 	
 	this.as = function(contentType){
-		this.contentType = contentType;
+		this.headers["Content-Type"] = contentType;
 		return this;
 	}
 	
 	this.get = function(){
-		var accept = this.accept; 
-		var xhr = ajax("GET",this.uri,'',{'Content-Type':this.contentType,'Accept': this.accept});
-		return new SerializerXHRStrategy().serialize(xhr,this); 
+		var xhr = AjaxRequest.ajax("GET",this.uri,'',this.headers);
+		var resource = new SerializerXHRStrategy().serialize(xhr);
+		return resource;
 	}
 	
 	this.post = function(object){
 		var backup = object.response;
 		delete object.response; 
-		var xhr = ajax("POST",this.uri,new SerializerResultStrategy(this.accept).parse(object),{'Content-Type':this.contentType,'Accept': this.accept});
-		return new SerializerXHRStrategy().serialize(xhr, this);
-	}
+		var content = new SerializerResultStrategy(this.headers['Content-Type']).parse(object);
+		var xhr = AjaxRequest.ajax("POST",this.uri,content,this.headers);
+		object.response = backup;
+		var resource = new SerializerXHRStrategy().serialize(xhr);
+		return resource;
+	} 
 }
  
 /**
@@ -81,26 +86,38 @@ function EntryPointService(uri) {
  */
 function SerializerXHRStrategy(){
 	var serializers = {
-			'200' : new SucessXHRSerializer()
+		 '200' : new SucessXHRSerializer()
+		,'201' : new RedirectXHRSerializer()
 	};
-	
-	this.serialize = function(xhr,entryPoint){
+	this.serialize = function(xhr){
 		var serializer = serializers[xhr.status];
 		if (serializer == null) serializer = new DefaultXHRSerializer();
-		return serializer.serialize(xhr,entryPoint);
+		return serializer.serialize(xhr);
 	}
 }
+ /**
+  * serializa uma resposta de um objeto xhr que obteve sucesso (status == 200)
+  */
+ function RedirectXHRSerializer(){
+ 	this.serialize = function(xhr){
+ 		var location = xhr.getResponseHeader("Location");
+ 		var accept = xhr.getResponseHeader("Accept");
+ 		return Restfulie.at(location).accepts(accept).get();
+ 	}
+ }
 
+ 
+ 
 /**
  * serializador default (status != 200)
  * 
  * @return
  */
 function DefaultXHRSerializer(){
-	this.serialize = function(xhr,entryPoint){
+	this.serialize = function(xhr){
 		var response = xhr.responseText;
 		var result = new Object();
-		result.toString = function (){return response };
+		result.toString = function (){return response};
 		result.response = {
 				body:response,
 				code:xhr.status
@@ -113,15 +130,14 @@ function DefaultXHRSerializer(){
  * serializa uma resposta de um objeto xhr que obteve sucesso (status == 200)
  */
 function SucessXHRSerializer(){
-	this.serialize = function(xhr,entryPoint){
-		var result = new SerializerResultStrategy(entryPoint.accept).unparse(xhr.responseText);
+	this.serialize = function(xhr){
+		var result = new SerializerResultStrategy(xhr.getResponseHeader("Content-Type")).unparse(xhr.responseText);
 		result.response = {
 				body:xhr.responseText,
 				code:xhr.status
 		};
-		return result;
+		return result;	
 	}
-	
 }
 
 
@@ -130,25 +146,24 @@ function SucessXHRSerializer(){
  * 
  * @return
  */
-function SerializerResultStrategy(accept) {
+function SerializerResultStrategy(contentType) {
 	var serializers = {
 			'application/json' : new SerializeResultJson()
 	};
-	this.accept = accept;
+	this.contentType = contentType;
 	
 	this.unparse = function(data)	{
-		return getSerializer(this.accept).unparse(data);
+		return getSerializer(this.contentType).unparse(data);
 	}
 	this.parse = function(data){
-		return getSerializer(this.accept).parse(data);
+		return getSerializer(this.contentType).parse(data);
 	}
 	
-	function getSerializer (acceptType){
-		var serializer = serializers[acceptType];
-		if (serializer == null)	throw new RestfulieException('cannot find serializer from '+ accept,0);
+	function getSerializer(contentType){
+		var serializer = serializers[contentType];
+		if (serializer == null)	throw new RestfulieException('cannot find serializer from '+contentType,0);
 		return serializer;
 	}
-	
 }
 
 /**
@@ -159,6 +174,7 @@ function SerializeResultJson(){
 
 	this.unparse = function(content){
 		var result;
+		if (content == '') return {};
 		result = JSON.parse(content);
 		return result;
 	}
