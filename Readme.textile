@@ -12,7 +12,6 @@ To use the restfulie you need to import the libraries listed in the
 &lt;script src="../../restfulie/lib/restfulie.js"&gt;&lt;/script&gt;
 &lt;script src="../../restfulie/lib/json2.js"&gt;&lt;/script&gt;
 &lt;script src="../../restfulie/lib/jquery-1.4.2.min.js"&gt;&lt;/script&gt;
-&lt;script src="../../restfulie/lib/jquery.xml2json.js"&gt;&lt;/script&gt;
 
 h2. A simple get
 
