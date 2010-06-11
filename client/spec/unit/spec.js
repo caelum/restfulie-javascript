@@ -21,5 +21,13 @@ describe 'Restfulie for javascript'
       result.item.id.should.not.equal r.item.id
     end
 
+    it 'Media type support through a registry'
+     Restfulie.media_types.register("application/xml",{
+      marshal : function(object){},
+      unmarshal : function(request){}
+     });
+      Restfulie.media_types['application/xml'].should.not.be_null
+    end
+
   end
 end
