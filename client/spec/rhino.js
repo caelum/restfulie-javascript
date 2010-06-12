@@ -8,6 +8,8 @@ load('spec/lib/jspec.jquery.js')
 
 load('lib/restfulie.js')
 load('lib/json2.js')
+load('lib/jquery.json2xml.js')
+load('lib/jquery.xml2json.js')
 		
 load('spec/unit/spec.helper.js')
 

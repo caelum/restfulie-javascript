@@ -5589,7 +5589,7 @@ __extend__(HTMLDocument.prototype, {
                 (!__isValidName__(tagName))) {
               throw(new DOMException(DOMException.INVALID_CHARACTER_ERR));
           }
-          tagName = tagName.toUpperCase();
+          //tagName = tagName.toUpperCase();
           // create DOMElement specifying 'this' as ownerDocument
           //This is an html document so we need to use explicit interfaces per the 
           if(     tagName.match(/^A$/))                 {node = new HTMLAnchorElement(this);}

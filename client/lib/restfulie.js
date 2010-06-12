@@ -29,6 +29,21 @@ var Restfulie = {};
     }  
   });
 
+  // register marshaler for application/xml
+  restfulie.media_types.register('application/xml',{
+    marshal : function(object){
+      var options = {};
+      return $.json2xml(object, options);
+    },
+    unmarshal : function(request){
+      var content = request.responseText;
+      
+      if (content == '') return {};
+		  result = $.xml2json(content);
+      return result;
+    }  
+  });
+
    
      
 
