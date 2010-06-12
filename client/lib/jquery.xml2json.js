@@ -105,6 +105,9 @@
      if(txt) out.text = txt;
      if(!simple) out = myArr(out);
     };
+    // custom
+    if (isNumber(out)) out = parseFloat(out);  
+    // end custom
     return out;
    };// parseXML
    // Core Function End
@@ -116,6 +119,11 @@
     // here is where you can attach additional functionality, such as searching and sorting...
     return o;
    };
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+
    // Utility functions End
    //### PARSER LIBRARY END
    
@@ -152,7 +160,6 @@
     if($.browser.msie) out = (xml.loadXML(str))?xml:false;
     else out = xml.parseFromString(str, "text/xml");
    }catch(e){ throw new Error("Error parsing XML string") };
-    out.preserveWhiteSpace=true;
    return out;
 
   }
