@@ -32,15 +32,13 @@ var Restfulie = {};
   // register marshaler for application/xml
   restfulie.media_types.register('application/xml',{
     marshal : function(object){
-      var options = {};
-      return $.json2xml(object, options);
+      return json2xml(object);
     },
     unmarshal : function(request){
       var content = request.responseText;
-      
       if (content == '') return {};
-		  result = $.xml2json(content);
-      return result;
+		  result = xml2json(parseXml(content), "  ");
+      return JSON.parse(result);
     }  
   });
 
@@ -77,8 +75,8 @@ var Restfulie = {};
     this.uri = uri;
 
     this.headers = {
-      "Accept" : "application/json",
-      "Content-Type" : "application/json"    
+      "Accept" : "application/xml",
+      "Content-Type" : "application/xml"    
     };
 
     // configure accept
@@ -89,6 +87,7 @@ var Restfulie = {};
   	// configure content-Type 
   	this.as = function(contentType){
   		this.headers["Content-Type"] = contentType;
+      this.headers["Accept"] = contentType;
   		return this;
   	}
     

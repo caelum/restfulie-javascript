@@ -30,12 +30,23 @@ describe 'Restfulie for javascript'
     end
     
     it 'Support xml element retrieve'
-     r = Restfulie.at("http://localhost:3000/items").accepts("application/xml").get();
-      r.item[0].price.should.equal 10
+      r = Restfulie.at("http://localhost:3000/items").accepts("application/xml").get();
+      r.items.item[0].price.should.equal 10
       r.response.body.should.not.be_null
       r.response.code.should.equal 200    
     end
-
+    
+    it 'Support xml posting'
+      r = Restfulie.at("http://localhost:3000/items/1").accepts("application/xml").get();
+      r.item.price.should.equal 10
+      r.response.body.should.not.be_null
+      r.response.code.should.equal 200  
+      r.item.price = 500
+      rn = Restfulie.at("http://localhost:3000/items").as("application/xml").post(r);
+      rn.response.body.should.not.be_null
+      rn.response.code.should.equal 200        
+      rn.item.price.should.equal 500
+    end
 
   end
 end
