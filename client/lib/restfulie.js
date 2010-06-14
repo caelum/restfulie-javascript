@@ -87,7 +87,6 @@ var Restfulie = {};
   	// configure content-Type 
   	this.as = function(contentType){
   		this.headers["Content-Type"] = contentType;
-      this.headers["Accept"] = contentType;
   		return this;
   	}
     
