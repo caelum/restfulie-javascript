@@ -1,0 +1,26 @@
+<html>
+	<head>
+
+		<script src="/spec/support/jquery.js"></script>
+		<script src="/spec/lib/jspec.js"></script>
+		<script src="/spec/lib/jspec.xhr.js"></script>
+		<script src="/spec/lib/jspec.jquery.js"></script>
+
+		<script src="/lib/restfulie.js"></script>
+		<script src="/lib/json2.js"></script>
+    <script src="/lib/jquery.xml2json.js"></script>
+    <script src="/lib/jquery.json2xml.js"></script>
+		<script src="/spec/unit/spec.helper.js"></script>
+
+		<script>
+			function runSuites() {
+				JSpec
+				.exec('unit/spec.js')
+				.run({ reporter: JSpec.reporters.Server, verbose: true, failuresOnly: true, fixturePath: '/spec/fixtures' })
+				.report()
+			}
+		</script>
+	</head>
+	<body class="jspec" onLoad="runSuites();">
+	</body>
+</html>

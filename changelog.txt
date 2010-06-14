@@ -1,2 +1,0 @@
-06/06/2010
-  mockado o xmlhttprequest para facilitar a execução dos testes sem executar o container 
