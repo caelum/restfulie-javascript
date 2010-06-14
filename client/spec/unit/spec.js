@@ -4,7 +4,7 @@ describe 'Restfulie for javascript'
     it 'get resources at success'
     	r = Restfulie.at("http://localhost:3000/items").get();
 
-      r.items[0].price.should.equal 10
+      r.items.item[0].price.should.equal 10
       r.response.body.should.not.be_null
       r.response.code.should.equal 200      
     end
