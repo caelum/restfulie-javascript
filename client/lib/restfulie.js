@@ -91,13 +91,32 @@ var Restfulie = {};
   	}
     
     // send request get
-    this.get = function(){
-  		var xhr = AjaxRequest.ajax("GET",this.uri,'',this.headers);
+    this.request_a = function(method){
+  		var xhr = AjaxRequest.ajax(method,this.uri,'',this.headers);
       return SerializeXHR.serialize(xhr);
   	}
     
-    //send request post
-    this.post = function(resource){
+    // send request get
+    this.get = function(){
+		return this.request_a("GET");
+  	}
+    
+    // send request trace
+    this.trace = function(){
+		return this.request_a("TRACE");
+  	}
+    
+    // send request head
+    this.head = function(){
+		return this.request_a("HEAD");
+  	}
+    
+    // send request options
+    this.options = function(){
+		return this.request_a("OPTIONS");
+  	}
+
+	this.request_with_payload(method, representation) {
       var backup;
       var content;
       var xhr;      
@@ -106,8 +125,23 @@ var Restfulie = {};
       var mediaType = restfulie.media_types.getMediaType(this.headers['Content-Type']);
       content = mediaType.marshal(resource);
       resource.response = backup;
-  		xhr = AjaxRequest.ajax("POST",this.uri,content,this.headers);
+  		xhr = AjaxRequest.ajax(method,this.uri,content,this.headers);
       return SerializeXHR.serialize(xhr,this);
+	}
+    
+    //send request post
+    this.post = function(representation){
+		return this.request_with_payload("POST", representation);
+    }
+
+    //send request patch
+    this.patch = function(representation){
+		return this.request_with_payload("PATCH", representation);
+    }
+
+    //send request put
+    this.put = function(representation){
+		return this.request_with_payload("POST", representation);
     }
 
   }    
