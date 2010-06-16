@@ -116,15 +116,15 @@ var Restfulie = {};
 		return this.request_a("OPTIONS");
   	}
 
-	this.request_with_payload(method, representation) {
+	this.request_with_payload = function(method, representation) {
       var backup;
       var content;
       var xhr;      
-      backup = resource.response;
-      delete resource.response;      
+      backup = representation.response;
+      delete representation.response;      
       var mediaType = restfulie.media_types.getMediaType(this.headers['Content-Type']);
-      content = mediaType.marshal(resource);
-      resource.response = backup;
+      content = mediaType.marshal(representation);
+      representation.response = backup;
   		xhr = AjaxRequest.ajax(method,this.uri,content,this.headers);
       return SerializeXHR.serialize(xhr,this);
 	}
