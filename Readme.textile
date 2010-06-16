@@ -12,11 +12,7 @@ To use the restfulie you need to import the libraries listed in the
 &lt;script src="../../restfulie/lib/restfulie.js"&gt;&lt;/script&gt;
 &lt;script src="../../restfulie/lib/json2.js"&gt;&lt;/script&gt;
 &lt;script src="../../restfulie/lib/jquery-1.4.2.min.js"&gt;&lt;/script&gt;
-<<<<<<< HEAD:Readme.textile
 &lt;script src="../../restfulie/lib/jquery.xml2json.js"&gt;&lt;/script&gt;
->>>>>>> 01-basic-json-support:Readme.textile
-=======
->>>>>>> 8f66ce3452739f5485312e163bbaf4a8da2fa240:Readme.textile
 
 h2. A simple get
 
@@ -38,7 +34,3 @@ console.log(resource.response.code) # the response code
 h1. License
 
 Restfulie is licensed under the Apache License, Version 2.0.
-<<<<<<< HEAD:Readme.textile
-=======
- 
->>>>>>> 8f66ce3452739f5485312e163bbaf4a8da2fa240:Readme.textile
