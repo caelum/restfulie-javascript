@@ -1,7 +1,6 @@
 rvm gemset create restfulie-js
 rvm gemset use restfulie-js
-gem install rails -v="2.3.5" --no-ri --no-rdoc
-gem install restfulie -v="0.8.1"  --no-ri --no-rdoc
-gem install jspec --no-ri --no-rdoc
+gem install bundler --no-ri --no-rdoc
+bundle install
 
 sh tests.sh
