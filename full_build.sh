@@ -1,2 +1,22 @@
-rvm install ruby-1.8.7-head
-rvm use ruby-1.8.7-head && rvm list && rvm gemset create restfulie-js && rvm gemset use restfulie-js && gem install bundler --no-ri --no-rdoc && bundle install && sh tests.sh
+RVM_PATH="/home/hudson/.rvm/gems/ruby-1.8.7-head"
+PATH="$RVM_PATH/bin:/home/hudson/.rvm/bin:$PATH",
+RUBY_VERSION='ruby 1.8.7-head',
+GEM_HOME="$RVM_PATH"
+GEM_PATH="$RVM_PATH"
+BUNDLE_PATH="$RVM_PATH"
+
+gem install bundler
+bundle install
+
+git submodule init
+git submodule update
+
+cd server/rest_in_practice/part_3/
+ruby script/server & 
+PID=$!
+cd ../../../client
+sleep 10
+jspec run --rhino
+echo $PID
+kill -9 $PID
+cd ..
