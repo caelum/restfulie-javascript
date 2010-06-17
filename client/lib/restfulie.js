@@ -77,7 +77,7 @@ var Restfulie = {};
     this.headers = {
       "Accept" : "",
       "Content-Type" : "application/xml"    
-    };
+    }; 
 
     // Default accepts should add all known media types
     for (var format in Restfulie.media_types)

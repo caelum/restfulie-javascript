@@ -1,7 +1,7 @@
 
 describe 'Restfulie for javascript'
   describe 'getting resources'
-    it 'get resources at success'
+    it 'get resources at success' 
     	r = Restfulie.at("http://localhost:3000/items").accepts('application/xml').get();
 
       r.items.item[0].price.should.equal 10
