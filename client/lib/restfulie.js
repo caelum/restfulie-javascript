@@ -75,9 +75,15 @@ var Restfulie = {};
     this.uri = uri;
 
     this.headers = {
-      "Accept" : "application/xml",
+      "Accept" : "",
       "Content-Type" : "application/xml"    
     };
+
+    // Default accepts should add all known media types
+    for (var format in Restfulie.media_types)
+      if ("register getMediaType".indexOf(format)==-1)
+        this.headers["Accept"] += (this.headers["Accept"]=='' ? '':', ') +format;
+
 
     // configure accept
     this.accepts = function(accept){
@@ -110,6 +116,11 @@ var Restfulie = {};
     this.head = function(){
 		return this.request_a("HEAD");
   	}
+
+    // send request delete
+    this._delete = function(){
+      return this.request_a("DELETE");
+    }
     
     // send request options
     this.options = function(){
@@ -141,7 +152,7 @@ var Restfulie = {};
 
     //send request put
     this.put = function(representation){
-		return this.request_with_payload("POST", representation);
+		return this.request_with_payload("PUT", representation);
     }
 
   }    

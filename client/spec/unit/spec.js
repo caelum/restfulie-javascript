@@ -2,7 +2,7 @@
 describe 'Restfulie for javascript'
   describe 'getting resources'
     it 'get resources at success'
-    	r = Restfulie.at("http://localhost:3000/items").get();
+    	r = Restfulie.at("http://localhost:3000/items").accepts('application/xml').get();
 
       r.items.item[0].price.should.equal 10
       r.response.body.should.not.be_null
@@ -47,6 +47,11 @@ describe 'Restfulie for javascript'
       rn.response.code.should.equal 200        
       rn.item.price.should.equal 500
     end
-
+    
+    it 'Default accepts should add all known media types'
+      entryPoint = Restfulie.at("http://localhost:3000/items");
+      entryPoint.headers['Accept'].indexOf("application/xml").should.not.equal -1 
+      entryPoint.headers['Accept'].indexOf("application/json").should.not.equal -1 
+    end
   end
 end
