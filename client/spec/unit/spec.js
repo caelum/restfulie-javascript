@@ -1,42 +1,42 @@
 
 describe 'Restfulie for javascript'
   describe 'getting resources'
-    it 'get resources at success' 
-    	r = Restfulie.at("http://localhost:3000/items").accepts('application/xml').get();
-
+    it 'should unmarshall when response was successful' 
+      r = Restfulie.at("http://localhost:3000/items").accepts('application/xml').get();
       r.items.item[0].price.should.equal 10
       r.response.body.should.not.be_null
       r.response.code.should.equal 200      
     end
 
-    it 'get resources at error'
+    it 'should work with 4** error codes'
       r = Restfulie.at("http://localhost:3000/notfound").get();
       r.response.code.should.equal 404
     end
     
-    it 'support post resources and 201 redirect'
+    it 'should follow 201 responses'
       r = Restfulie.at("http://localhost:3000/items/1").get();
       r.item.price = 20;
       result = Restfulie.at("http://localhost:3000/items").post(r);
       result.item.id.should.not.equal r.item.id
     end
 
-    it 'Media type support through a registry'
-     Restfulie.media_types.register("application/amf",{
+    it 'should allow media type registration through a registry'
+     type = {
       marshal : function(object){},
       unmarshal : function(request){}
-     });
-      Restfulie.media_types['application/amf'].should.not.be_null
+     };
+     Restfulie.media_types.register("application/amf",type);
+      Restfulie.media_types['application/amf'].should.equal type
     end
     
-    it 'Support xml element retrieve'
+    it 'should support xml retrieval'
       r = Restfulie.at("http://localhost:3000/items").accepts("application/xml").get();
       r.items.item[0].price.should.equal 10
       r.response.body.should.not.be_null
       r.response.code.should.equal 200    
     end
     
-    it 'Support xml posting'
+    it 'should support xml marshalling'
       r = Restfulie.at("http://localhost:3000/items/1").accepts("application/xml").get();
       r.item.price.should.equal 10
       r.response.body.should.not.be_null
@@ -55,7 +55,7 @@ describe 'Restfulie for javascript'
       rn.item.price.should.equal 500
     end
     
-    it 'Default accepts should add all known media types'
+    it 'should add all known media types as default accepts'
       entryPoint = Restfulie.at("http://localhost:3000/items");
       entryPoint.headers['Accept'].indexOf("application/xml").should.not.equal -1 
       entryPoint.headers['Accept'].indexOf("application/json").should.not.equal -1 
