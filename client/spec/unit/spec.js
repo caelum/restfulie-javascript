@@ -48,6 +48,13 @@ describe 'Restfulie for javascript'
       rn.item.price.should.equal 500
     end
     
+    it 'should post the content if its a string'
+      rn = Restfulie.at("http://localhost:3000/items").as("application/xml").post("<item><name>Calpis</name><price>500</price></item>");
+      rn.response.body.should.not.be_null
+      rn.response.code.should.equal 200        
+      rn.item.price.should.equal 500
+    end
+    
     it 'Default accepts should add all known media types'
       entryPoint = Restfulie.at("http://localhost:3000/items");
       entryPoint.headers['Accept'].indexOf("application/xml").should.not.equal -1 

@@ -133,10 +133,14 @@ var Restfulie = {};
       var xhr;      
       backup = representation.response;
       delete representation.response;      
-      var mediaType = restfulie.media_types.getMediaType(this.headers['Content-Type']);
-      content = mediaType.marshal(representation);
+      if((typeof representation) == "string") {
+        content = representation;
+      } else {
+        var mediaType = restfulie.media_types.getMediaType(this.headers['Content-Type']);
+        content = mediaType.marshal(representation);
+      }
       representation.response = backup;
-  		xhr = AjaxRequest.ajax(method,this.uri,content,this.headers);
+      xhr = AjaxRequest.ajax(method,this.uri,content,this.headers);
       return SerializeXHR.serialize(xhr,this);
 	}
     
