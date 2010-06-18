@@ -67,6 +67,13 @@ describe 'Restfulie for javascript'
       itemForLink = itemForList.links["self"].get();
       itemForLink.item.id.should.equal itemForList.id
     end
+
+    it 'Support link following for json'
+      resource = Restfulie.at("http://localhost:3000/items").accepts("application/json").get();
+      itemForList = resource.items[0];
+      itemForLink = itemForList.links["self"].get();
+      itemForLink.item.id.should.equal itemForList.id
+    end
   end
 end
 
