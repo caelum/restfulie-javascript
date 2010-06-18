@@ -1,6 +1,6 @@
 
 describe 'Restfulie for javascript'
-  describe 'getting resources'
+  describe 'core'
     it 'should unmarshall when response was successful' 
       r = Restfulie.at("http://localhost:3000/items").accepts('application/xml').get();
       r.items.item[0].price.should.equal 10
@@ -60,5 +60,13 @@ describe 'Restfulie for javascript'
       entryPoint.headers['Accept'].indexOf("application/xml").should.not.equal -1 
       entryPoint.headers['Accept'].indexOf("application/json").should.not.equal -1 
     end
+
+    it 'should allow the representation to follow those links'
+      resource = Restfulie.at("http://localhost:3000/items").accepts("application/xml").get();
+      itemForList = resource.items.item[0];
+      itemForLink = itemForList.links["self"].get();
+      itemForLink.item.id.should.equal itemForList.id
+    end
   end
 end
+
