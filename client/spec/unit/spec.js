@@ -74,6 +74,30 @@ describe 'Restfulie for javascript'
       itemForLink = itemForList.links["self"].get();
       itemForLink.item.id.should.equal itemForList.id
     end
+
+  end
+
+  describe 'Rest from scratch examples'
+    describe 'Part 1'
+      it 'should get items with default response format'
+        h = Restfulie.at('http://localhost:3000/items').get();
+
+        h.items.length.should.be_greater_than 0
+        h.items[0].name.should.equal "Calpis"
+        h.items[0].price.should.equal 10
+      end
+
+      it 'should get items when I request specific format, in this case json'
+        h = Restfulie.at('http://localhost:3000/items').accepts("application/json").get();
+
+        h.items.length.should.be_greater_than 0
+        h.items[0].name.should.equal "Calpis"
+        h.items[0].price.should.equal 10
+
+        h.response.headers['content-type'].should.equal "application/json"
+        h.response.code.should.equal 200
+      end
+    end
   end
 end
 

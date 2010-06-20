@@ -251,6 +251,11 @@ var Restfulie = {};
     resource.response = {};
     resource.response.body = xhr.responseText;
     resource.response.code = xhr.status;
+
+    //TODO: add all headers here
+    resource.response.headers = {};
+    resource.response.headers['content-type'] = xhr.getResponseHeader("Content-Type").split(";")[0];
+
     return resource;
   }  
 
