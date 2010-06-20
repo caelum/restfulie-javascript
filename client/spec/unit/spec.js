@@ -97,6 +97,25 @@ describe 'Restfulie for javascript'
         h.response.code.should.equal 200
         h.response.headers['content-type'].indexOf('application/json').should.equal 0
       end
+
+      it 'should create an item using a xml representation of an item'
+        xml = '<item><name>calpis_xml</name><price>3</price></item>';
+        h = Restfulie.at("http://localhost:3000/items").as("application/xml").post(xml);
+        h.item.price.should.equal 3
+        h.item.name.should.equal 'calpis_xml'
+      end
+
+      it 'should create an item using a json representation of an item'
+        json = {
+          item: {
+            name:'calpis_json',
+            price:3
+          }
+        };
+        h = Restfulie.at("http://localhost:3000/items").as("application/json").post(json);
+        h.item.price.should.equal 3
+        h.item.name.should.equal 'calpis_json'
+      end
     end
   end
 end
