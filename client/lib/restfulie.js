@@ -251,10 +251,14 @@ var Restfulie = {};
     resource.response = {};
     resource.response.body = xhr.responseText;
     resource.response.code = xhr.status;
-
-    //TODO: add all headers here
     resource.response.headers = {};
-    resource.response.headers['content-type'] = xhr.getResponseHeader("Content-Type").split(";")[0];
+
+    responseHeaders = xhr.getAllResponseHeaders().split("\n");
+    for(idx in responseHeaders)
+    {
+      header = responseHeaders[idx].split(":");
+      resource.response.headers[header[0].toLowerCase()] = header[1].replace(/^\s+|\s+$/g,"");
+    }
 
     return resource;
   }  

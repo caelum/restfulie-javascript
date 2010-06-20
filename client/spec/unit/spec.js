@@ -94,8 +94,8 @@ describe 'Restfulie for javascript'
         h.items[0].name.should.equal "Calpis"
         h.items[0].price.should.equal 10
 
-        h.response.headers['content-type'].should.equal "application/json"
         h.response.code.should.equal 200
+        h.response.headers['content-type'].indexOf('application/json').should.equal 0
       end
     end
   end
