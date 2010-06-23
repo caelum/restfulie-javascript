@@ -257,7 +257,7 @@ var Restfulie = {};
     for(idx in responseHeaders)
     {
       header = responseHeaders[idx].split(":");
-      resource.response.headers[header[0].toLowerCase()] = header[1].replace(/^\s+|\s+$/g,"");
+      resource.response.headers[header[0]] = header[1].replace(/^\s+|\s+$/g,"");
     }
 
     return resource;

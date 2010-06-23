@@ -75,6 +75,11 @@ describe 'Restfulie for javascript'
       itemForLink.item.id.should.equal itemForList.id
     end
 
+    it 'should follow header links'
+      resource = Restfulie.at("http://localhost:3000/items").accepts("application/json").get(); 
+      //resource.headers['Link']
+    end
+
   end
 
   describe 'Rest from scratch examples'
@@ -95,7 +100,7 @@ describe 'Restfulie for javascript'
         h.items[0].price.should.equal 10
 
         h.response.code.should.equal 200
-        h.response.headers['content-type'].indexOf('application/json').should.equal 0
+        h.response.headers['Content-Type'].indexOf('application/json').should.equal 0
       end
 
       it 'should create an item using a xml representation of an item'
