@@ -246,22 +246,6 @@ var Restfulie = {};
     }
   }
 
-  function getHeaderLinkData(headerValue) {
-    linkData = headerValue.split(';');
-    linkProperties = { href: linkData[0].replace(/^\s+|\s+$/g,'').replace('<', '').replace('>', '')};
-    for(x=1; x < linkData.length; x++)
-    {
-      linkProperty = linkData[x].split('=');
-      linkProperties[linkProperty[0].replace(/^\s+|\s+$/g,'')] = linkProperty[1].replace(/^"/g, '');
-    }
-
-    link = {};
-    link['href'] = linkProperties.href;
-    link['rel'] = ( linkProperties.rel != undefined ) ? linkProperties.rel : linkProperties.href;
-
-    return link;
-  }
-
   function getResponseHeadersFrom(xhr) {
     headers = {links:{}};
     responseHeaders = xhr.getAllResponseHeaders().split("\n");
@@ -269,17 +253,7 @@ var Restfulie = {};
     {
       header = responseHeaders[idx].split(":")[0];
       value = xhr.getResponseHeader(header);
-      isHeaderLink = header.toLowerCase() == 'link';
-      if(isHeaderLink)
-      {
-        link = getHeaderLinkData(value);
-        entryPoint = new EntryPoint(link.url).accepts(xhr.getResponseHeader('Content-Type').split(";")[0]);
-        headers.links[link.rel] = entryPoint;
-      }
-      else
-      {
-        headers[header] = value.replace(/^\s+|\s+$/g,"");
-      }
+      headers[header] = value.replace(/^\s+|\s+$/g,"");
     }
     return headers;
   }
