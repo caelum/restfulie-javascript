@@ -247,14 +247,32 @@ var Restfulie = {};
   }
 
   function getResponseHeadersFrom(xhr) {
-    headers = {links:{}};
+    headers = {};
+    headerLinks = {};
     responseHeaders = xhr.getAllResponseHeaders().split("\n");
     for(idx in responseHeaders)
     {
-      header = responseHeaders[idx].split(":")[0];
-      value = xhr.getResponseHeader(header);
-      headers[header] = value.replace(/^\s+|\s+$/g,"");
+      headerData = responseHeaders[idx].split(':');
+      header = headerData[0];
+      value = headerData[1];
+      if (header == 'Link')
+      {
+        linkData = value.split(";");
+        //todo: make this in a single regex
+        linkUrl = linkData[0].replace(/^\s+|\s+$/g,'').replace('<', '').replace('>', '');
+        linkRel = linkData[1].split('=')[1].replace(/"+/g, '').replace(/^\s+|\s+$/g,'');
+        headerLinks[linkRel] = new EntryPoint(linkUrl);
+      }
+      else
+      {
+        if (value != undefined)
+        {
+          headers[header] = value.replace(/^\s+|\s+$/g,'');
+        }
+      }
     }
+    headers['links'] = headerLinks;
+
     return headers;
   }
   
@@ -263,6 +281,7 @@ var Restfulie = {};
     resource.response = {};
     resource.response.body = xhr.responseText;
     resource.response.code = xhr.status;
+    b = getResponseHeadersFrom(xhr);
     resource.response.headers = getResponseHeadersFrom(xhr);
     return resource;
   }  

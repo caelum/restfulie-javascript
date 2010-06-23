@@ -76,18 +76,16 @@ describe 'Restfulie for javascript'
     end
 
     it 'should follow header links'
-        /*
       json_one = '{"item":{"price":10.0,"name":"Calpis","created_at":"2010-04-20T14:19:25Z","updated_at":"2010-04-20T14:19:25Z","id":1}}';
       json_two = '{"item":{"price":10.0,"name":"Calpis","created_at":"2010-04-20T14:19:25Z","updated_at":"2010-04-20T14:19:25Z","id":2}}';
  
       mock_request().and_return(json_one, 'application/json', 200,{Link: ' </items/two>; rel="two"'});
       h_one = Restfulie.at("http://restfulie.js/items/one").accepts("application/json").get();
 
-      mock_request().and_return(json_two, 'application/json', 200, {Link: ' </items/two>; rel="two"'});
+      mock_request().and_return(json_two, 'application/json', 200, {Link: ' </items/one>; rel="one"'});
       h_two = h_one.response.headers.links['two'].get();
 
       h_two.item.id.should.equal 2
-      */
     end
 
   end
