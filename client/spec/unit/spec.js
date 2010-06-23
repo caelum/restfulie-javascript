@@ -76,8 +76,7 @@ describe 'Restfulie for javascript'
     end
 
     it 'should follow header links'
-      resource = Restfulie.at("http://localhost:3000/items").accepts("application/json").get();
-      h_one = Restfulie.at("http://localhost:3000/items/one").accepts("application/json").get();
+      h_one = Restfulie.at("http://restfulie.js/items/one").accepts("application/json").get();
       h_two = h_one.response.headers.links['two'].get();
       h_two.item.id.should.equal 2
     end

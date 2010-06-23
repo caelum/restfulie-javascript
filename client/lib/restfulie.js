@@ -156,10 +156,10 @@ var Restfulie = {};
   	}
     
     // send request get
-    this.request_a = function(method){
-  		var xhr = AjaxRequest.ajax(method,this.uri,'',this.headers);
-      return SerializeXHR.serialize(xhr);
-  	}
+    this.request_a = function(method) {
+        var xhr = AjaxRequest.ajax(method,this.uri,'',this.headers);
+        return SerializeXHR.serialize(xhr);
+    }
     
     // send request get
     this.get = function(){
