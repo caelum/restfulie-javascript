@@ -4,7 +4,7 @@ var Restfulie = {};
 (function(restfulie){
   
   //Media type support through a registry
-  restfulie.media_types = [];
+  restfulie.media_types =[];
   
   restfulie.media_types['register'] = function(format,media){
     restfulie.media_types[format] = media;  
@@ -24,9 +24,38 @@ var Restfulie = {};
     unmarshal : function(request){
       var content = request.responseText;
       if (content == '') return {};
-		  result = JSON.parse(content);             
+		  result = JSON.parse(content);
+      result = this.discoveryAndBuildLinks(result);             
       return result;
-    }  
+    },
+    discoveryAndBuildLinks: function(resource){
+      for (var part in resource){
+          resource[part] = this.discoveryAndBuildLinks(resource[part]);    
+      }
+
+      if (resource.link == undefined) return resource;
+
+      if (resource.link.length == undefined ){
+        var link = resource.link;
+        resource.link = new Array();
+        resource.link[0] = link;
+      }
+      resource.links = new Array();
+      for (var i=0;i<resource.link.length;i++){
+        var rel = resource.link[i]["rel"],
+          href = resource.link[i]["href"],
+          accept = resource.link[i]["type"];
+
+          var linkResource = Restfulie.at(href);
+
+        if (accept != null) {
+          linkResource.accepts(accept);
+        } 
+        resource.links[rel] = linkResource;
+      } 
+      delete resource.link;
+      return resource;
+    } 
   });
 
   // register marshaler for application/xml
@@ -38,8 +67,38 @@ var Restfulie = {};
       var content = request.responseText;
       if (content == '') return {};
 		  result = xml2json(parseXml(content), "  ");
-      return JSON.parse(result);
-    }  
+      result = JSON.parse(result);
+      result = this.discoveryAndBuildLinks(result);
+      return result;
+    },
+    discoveryAndBuildLinks: function(resource){
+      for (var part in resource){
+          resource[part] = this.discoveryAndBuildLinks(resource[part]);    
+      }
+
+      if (resource.link == undefined) return resource;
+
+      if (resource.link.length == undefined ){
+        var link = resource.link;
+        resource.link = new Array();
+        resource.link[0] = link;
+      }
+      resource.links = new Array();
+      for (var i=0;i<resource.link.length;i++){
+        var rel = resource.link[i]["@rel"],
+          href = resource.link[i]["@href"],
+          accept = resource.link[i]["@type"];
+
+          var linkResource = Restfulie.at(href);
+
+        if (accept != null) {
+          linkResource.accepts(accept);
+        } 
+        resource.links[rel] = linkResource;
+      } 
+      delete resource.link;
+      return resource;
+    }
   });
 
    
