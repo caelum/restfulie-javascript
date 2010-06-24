@@ -9,27 +9,43 @@ h1. How to install
 To use the restfulie you need to import the libraries listed in the  
 \webContent\restfulie\lib.
 
+<pre>
 &lt;script src="../../restfulie/lib/restfulie.js"&gt;&lt;/script&gt;
 &lt;script src="../../restfulie/lib/json2.js"&gt;&lt;/script&gt;
 &lt;script src="../../restfulie/lib/jquery-1.4.2.min.js"&gt;&lt;/script&gt;
 &lt;script src="../../restfulie/lib/jquery.xml2json.js"&gt;&lt;/script&gt;
+</pre>
 
 h2. A simple get
 
 resource = Restfulie.at(url).accepts('application/json').get();
 
 h2. A simple post
-	
+
+<pre>	
 	x = {'price':11};
  	result = Restfulie.at(url).as("application/json").post(x);
+</pre>
 
 h2. Checking the respult
 
+<pre>
 resource = Restfulie.at(url).accepts('application/json').get();
 resource = Restfulie.at(url).as('application/json').post(resource);
 
 console.log(resource.response.body) # the response body
 console.log(resource.response.code) # the response code
+</pre>
+
+h1. Team
+
+Restfulie Javascript was created by "Carlos Alberto":http://euprogramador.com.br and has received contributions from:
+
+"Guilherme Silveira":http://restfulie.caelumobjects.com (Restfulie project leader)
+
+h2. More info
+
+Do not forget "to visit the official website":http://restfulie.caelumobjects.com for videos and other versions.
 
 h2. Contributions
 
