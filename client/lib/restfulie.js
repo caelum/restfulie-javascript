@@ -281,7 +281,6 @@ var Restfulie = {};
     resource.response = {};
     resource.response.body = xhr.responseText;
     resource.response.code = xhr.status;
-    b = getResponseHeadersFrom(xhr);
     resource.response.headers = getResponseHeadersFrom(xhr);
     return resource;
   }  

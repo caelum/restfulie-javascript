@@ -31,6 +31,16 @@ resource = Restfulie.at(url).as('application/json').post(resource);
 console.log(resource.response.body) # the response body
 console.log(resource.response.code) # the response code
 
+h2. Contributions
+
+Restfulie was created and is maintained by "Caelum":http://caelumobjects.com, and has received enormous contributions from all those developers:
+
+Project Leader
+Guilherme Silveira, "Caelum":http://caelum.com.br
+
+Carlos alberto
+"Ricardo Valeriano":http://ricardovaleriano.com.br
+
 h1. License
 
 Restfulie is licensed under the Apache License, Version 2.0.
