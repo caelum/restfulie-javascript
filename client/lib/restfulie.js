@@ -259,9 +259,9 @@ var Restfulie = {};
       {
         linkData = value.split(";");
         //todo: make this in a single regex
-        linkUrl = linkData[0].replace(/^\s+|\s+$/g,'').replace('<', '').replace('>', '');
-        linkRel = linkData[1].split('=')[1].replace(/"+/g, '').replace(/^\s+|\s+$/g,'');
-        headerLinks[linkRel] = new EntryPoint(linkUrl);
+        url = linkData[0].replace(/^\s+|\s+$/g,'').replace('<', '').replace('>', '');
+        rel = linkData[1].split('=')[1].replace(/"+/g, '').replace(/^\s+|\s+$/g,'');
+        headerLinks[rel] = Restfulie.at(url).accepts(xhr.getResponseHeader("Content-Type").split(";")[0]);
       }
       else
       {
