@@ -12,9 +12,11 @@ To use the restfulie you need to import the libraries listed in the
 <pre>
 <script src="../../restfulie/lib/restfulie.js"></script>
 <script src="../../restfulie/lib/json2.js"></script>
-<script src="../../restfulie/lib/jquery-1.4.2.min.js"></script>
-<script src="../../restfulie/lib/jquery.xml2json.js"></script>
+<script src="../../restfulie/lib/json2xml.js"></script>
+<script src="../../restfulie/lib/xml2json.js"></script>
 </pre>
+
+This project required jquery your project.
 
 h2. A simple get
 
@@ -27,7 +29,7 @@ h2. A simple post
  	result = Restfulie.at(url).as("application/json").post(x);
 </pre>
 
-h2. Checking the respult
+h2. Checking the result
 
 <pre>
 resource = Restfulie.at(url).accepts('application/json').get();
@@ -39,7 +41,7 @@ console.log(resource.response.code) # the response code
 
 h1. Team
 
-Restfulie Javascript was created by "Carlos Alberto":http://euprogramador.com.br and has received contributions from:
+Restfulie Javascript was created by "Carlos Alberto":http://progdicas.blogspot.com and has received contributions from:
 
 "Guilherme Silveira":http://restfulie.caelumobjects.com (Restfulie project leader)
 "Ricardo Valeriano":http://www.ricardovaleriano.com.br

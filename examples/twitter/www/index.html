@@ -1,0 +1,38 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Twitter - tweets</title>
+		<script src="/www/js/jquery.js"></script>
+		<script src="/www/js/restfulie.js"></script>
+		<script src="/www/js/json2.js"></script>
+		<script src="/www/js/xml2json.js"></script>
+		<script src="/www/js/json2xml.js"></script>
+		<script>
+			$(document).ready(function() {
+				try {
+					a = Restfulie.at("/proxy/http/api.twitter.com/1/statuses/public_timeline.xml").get();
+					for (statusIndex in a.statuses.status){
+						status = a.statuses.status[statusIndex];
+						$(tweets).html($(tweets).html()
+						+"<div class='status'>"
+							+"<div class='author'><a href='http://twitter.com/"+status.user.screen_name+"'>@"+status.user.screen_name+"</a></div>"
+							+"<div class='msg'>"+status.text+"<pre>"+"("+status.source+" | "+status.created_at+")"+"</pre></div>"
+						+"</div>"
+						);
+					}
+				} catch (error){
+					alert(error);
+				}
+			});
+		</script>
+		<style>
+			body, a,p {font-family:arial; font-size:10pt;}
+			.status {border-top: 1px #f0f0f0 solid; margin: 5px;padding-top:10px;}
+			.msg { margin-left: 20px;}
+		</style>
+	</head>
+	<body>
+		<div id="tweets">
+		</div>
+	</body>
+</html>
