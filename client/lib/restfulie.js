@@ -7,8 +7,8 @@ var Restfulie = {};
     ajax: function(method,uri,content,headers){
 	  	return jQuery.ajax({
 	  		beforeSend: function(xhrObj){
-	  			for (var x in headers)
-	  				xhrObj.setRequestHeader(x,headers[x]);
+	  			for (var header in headers)
+	  				xhrObj.setRequestHeader(header, headers[header]);
 	  			return xhrObj;
 	  		},
 	  		data:content,
@@ -52,23 +52,23 @@ var Restfulie = {};
     
     // send request get
     this.request_a = function(method) {
-        var xhr = AjaxRequest.ajax(method,this.uri,'',this.headers);
-        return SerializeXHR.serialize(xhr);
+      var xhr = AjaxRequest.ajax(method,this.uri,'',this.headers);
+      return SerializeXHR.serialize(xhr);
     }
     
     // send request get
     this.get = function(){
-		return this.request_a("GET");
+      return this.request_a("GET");
   	}
     
     // send request trace
     this.trace = function(){
-		return this.request_a("TRACE");
+      return this.request_a("TRACE");
   	}
     
     // send request head
     this.head = function(){
-		return this.request_a("HEAD");
+      return this.request_a("HEAD");
   	}
 
     // send request delete
@@ -78,10 +78,10 @@ var Restfulie = {};
     
     // send request options
     this.options = function(){
-		return this.request_a("OPTIONS");
+      return this.request_a("OPTIONS");
   	}
 
-	this.request_with_payload = function(method, representation) {
+    this.request_with_payload = function(method, representation) {
       var backup;
       var content;
       var xhr;      
@@ -96,21 +96,21 @@ var Restfulie = {};
       representation.response = backup;
       xhr = AjaxRequest.ajax(method,this.uri,content,this.headers);
       return SerializeXHR.serialize(xhr,this);
-	}
+    }
     
     //send request post
     this.post = function(representation){
-		return this.request_with_payload("POST", representation);
+      return this.request_with_payload("POST", representation);
     }
 
     //send request patch
     this.patch = function(representation){
-		return this.request_with_payload("PATCH", representation);
+      return this.request_with_payload("PATCH", representation);
     }
 
     //send request put
     this.put = function(representation){
-		return this.request_with_payload("PUT", representation);
+      return this.request_with_payload("PUT", representation);
     }
 
   }    
@@ -119,7 +119,7 @@ var Restfulie = {};
   SerializeXHR = {
     serialize : function (xhr,entryPoint){
       var serializer = SerializerXHRResponse[xhr.status];
-      if (serializer == null) serializer = SerializerXHRResponse["default"];
+      if (!serializer) serializer = SerializerXHRResponse["default"];
       return serializer(xhr,entryPoint);
     }
   }
@@ -145,13 +145,13 @@ var Restfulie = {};
     headers = {};
     headerLinks = {};
     responseHeaders = xhr.getAllResponseHeaders().split("\n");
-    for(idx in responseHeaders){
-      headerData = responseHeaders[idx].split(':');
+    for(headerName in responseHeaders){
+      headerData = responseHeaders[headerName].split(':');
       header = headerData[0];
       value = headerData[1];
       if (header == 'Link'){
         linkData = value.split(";");
-        url = linkData[0].trim().replace('<|>', '');
+        url = linkData[0].trim().replace(/<|>/g, '');
         rel = linkData[1].split('=')[1].replace(/"+/g, '').trim();
         headerLinks[rel] = Restfulie.at(url).accepts(xhr.getResponseHeader("Content-Type").split(";")[0]);
       }
