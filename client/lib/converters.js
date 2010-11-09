@@ -5,7 +5,7 @@ var PlainConverter = {
   unmarshal : function(request){
     return request.responseText;
   },
-  discoveryAndBuildLinks: function(resource){
+  findAndBuildLinks: function(resource){
     return resource;
   }
 };
@@ -16,35 +16,35 @@ var XmlConverter = {
   },
   unmarshal : function(request){
     var content = request.responseText;
-    if (content == '') return {};
-		  result = xml2json(parseXml(content), "  ");
+    if (!content) return {};
+    result = xml2json(parseXml(content), "  ");
     result = JSON.parse(result);
-    result = this.discoveryAndBuildLinks(result);
+    result = this.findAndBuildLinks(result);
     return result;
   },
- discoveryAndBuildLinks: function(resource){
-    if (resource == null) return resource;
+  findAndBuildLinks: function(resource){
+    if (!resource) return resource;
     if (typeof(resource) != 'object') return resource;
     for (var idx in resource){
-      resource[idx] = this.discoveryAndBuildLinks(resource[idx]);
+      resource[idx] = this.findAndBuildLinks(resource[idx]);
     }
-    if (resource.link == undefined) return resource;
+    if (!resource.link) return resource;
 
-    if (resource.link.length == undefined ){
+    if (!resource.link.length){
       var link = resource.link;
-      resource.link = new Array();
+      resource.link = [];
       resource.link[0] = link;
     }
-    resource.links = new Array();
+    resource.links = [];
     for (var i=0;i<resource.link.length;i++){
       var rel = resource.link[i]["@rel"],
-        href = resource.link[i]["@href"],
-        accept = resource.link[i]["@type"];
+      href = resource.link[i]["@href"],
+      accept = resource.link[i]["@type"];
 
       var linkResource = href;
       var linkResource = Restfulie.at(href);
 
-      if (accept != null) {
+      if (accept) {
         linkResource.accepts(accept);
       }
       resource.links[rel] = linkResource;
@@ -60,35 +60,35 @@ var JsonConverter = {
   },
   unmarshal : function(request){
     var content = request.responseText;
-    if (content == '') return {};
-		  result = JSON.parse(content);
-    result = this.discoveryAndBuildLinks(result);             
+    if (!content) return {};
+    result = JSON.parse(content);
+    result = this.findAndBuildLinks(result);             
     return result;
   },
 
-  discoveryAndBuildLinks: function(resource){
-    if (resource == null) return resource;
+  findAndBuildLinks: function(resource){
+    if (!resource) return resource;
     if (typeof(resource) != 'object') return resource;
     for (var idx in resource){
-      resource[idx] = this.discoveryAndBuildLinks(resource[idx]);
+      resource[idx] = this.findAndBuildLinks(resource[idx]);
     }
-    if (resource.link == undefined) return resource;
+    if (!resource.link) return resource;
 
-    if (resource.link.length == undefined ){
+    if (!resource.link.length){
       var link = resource.link;
-      resource.link = new Array();
+      resource.link = [];
       resource.link[0] = link;
     }
-    resource.links = new Array();
+    resource.links = [];
     for (var i=0;i<resource.link.length;i++){
       var rel = resource.link[i]["rel"],
-        href = resource.link[i]["href"],
-        accept = resource.link[i]["type"];
+      href = resource.link[i]["href"],
+      accept = resource.link[i]["type"];
 
       var linkResource = href;
       var linkResource = Restfulie.at(href);
 
-      if (accept != null) {
+      if (!accept) {
         linkResource.accepts(accept);
       }
       resource.links[rel] = linkResource;
@@ -100,17 +100,17 @@ var JsonConverter = {
 
 var Converters = {
 
-	// registry
-	mediaTypes = {};
+  // registry
+  mediaTypes = {};
 
-	register : function(name, converter) {
-		mediaTypes[name] = converter
-	}
-	
-	getMediaType : function(format){
-	  var converter = media_types[format];  
-	  return converter || PlainConverter;
-	}
+  register : function(name, converter) {
+    mediaTypes[name] = converter
+  }
+
+  getMediaType : function(format){
+    var converter = mediaTypes[format];  
+    return converter || PlainConverter;
+  }
 
 }
 

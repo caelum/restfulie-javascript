@@ -145,29 +145,23 @@ var Restfulie = {};
     headers = {};
     headerLinks = {};
     responseHeaders = xhr.getAllResponseHeaders().split("\n");
-    for(idx in responseHeaders)
-    {
+    for(idx in responseHeaders){
       headerData = responseHeaders[idx].split(':');
       header = headerData[0];
       value = headerData[1];
-      if (header == 'Link')
-      {
+      if (header == 'Link'){
         linkData = value.split(";");
-        //todo: make this in a single regex
-        url = linkData[0].replace(/^\s+|\s+$/g,'').replace('<', '').replace('>', '');
-        rel = linkData[1].split('=')[1].replace(/"+/g, '').replace(/^\s+|\s+$/g,'');
+        url = linkData[0].trim().replace('<|>', '');
+        rel = linkData[1].split('=')[1].replace(/"+/g, '').trim();
         headerLinks[rel] = Restfulie.at(url).accepts(xhr.getResponseHeader("Content-Type").split(";")[0]);
       }
-      else
-      {
-        if (value != undefined)
-        {
-          headers[header] = value.replace(/^\s+|\s+$/g,'');
+      else{
+        if (value){
+          headers[header] = value.trim();
         }
       }
     }
     headers['links'] = headerLinks;
-
     return headers;
   }
   
@@ -185,4 +179,11 @@ var Restfulie = {};
     this.err = errCode;
   }
    
-})(Restfulie); 
+})(Restfulie);
+
+
+if(!String.prototype.trim){
+  String.prototype.trim = function(){
+    this.replace(/^\s+|\s+$/g,'');
+  }
+}
