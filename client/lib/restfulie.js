@@ -1,113 +1,6 @@
-
 var Restfulie = {};
 
 (function(restfulie){
-  
-  //Media type support through a registry
-  restfulie.media_types =[];
-  
-  restfulie.media_types['register'] = function(format,media){
-    restfulie.media_types[format] = media;  
-  };
-  
-  restfulie.media_types['getMediaType'] = function(format){
-    var mediaType = restfulie.media_types[format];  
-    if (mediaType == null) throw new RestfulieException("media type not supported: "+format,0);
-    return mediaType;
-  }
-  
-  // register marshaler for application/json
-  restfulie.media_types.register('application/json',{
-    marshal : function(object){
-      return JSON.stringify(object);
-    },
-    unmarshal : function(request){
-      var content = request.responseText;
-      if (content == '') return {};
-		  result = JSON.parse(content);
-      result = this.discoveryAndBuildLinks(result);             
-      return result;
-    },
-    
-    discoveryAndBuildLinks: function(resource){
-      if (resource == null) return resource;
-      if (typeof(resource) != 'object') return resource;
-      for (var idx in resource){
-        resource[idx] = this.discoveryAndBuildLinks(resource[idx]);
-      }
-      if (resource.link == undefined) return resource;
-
-      if (resource.link.length == undefined ){
-        var link = resource.link;
-        resource.link = new Array();
-        resource.link[0] = link;
-      }
-      resource.links = new Array();
-      for (var i=0;i<resource.link.length;i++){
-        var rel = resource.link[i]["rel"],
-          href = resource.link[i]["href"],
-          accept = resource.link[i]["type"];
-   
-        var linkResource = href;
-        var linkResource = Restfulie.at(href);
-
-        if (accept != null) {
-          linkResource.accepts(accept);
-        }
-        resource.links[rel] = linkResource;
-      }
-      delete resource.link;
-      return resource;
-    }
-  });
-
-  // register marshaler for application/xml
-  restfulie.media_types.register('application/xml',{
-    marshal : function(object){
-      return json2xml(object);
-    },
-    unmarshal : function(request){
-      var content = request.responseText;
-      if (content == '') return {};
-		  result = xml2json(parseXml(content), "  ");
-      result = JSON.parse(result);
-      result = this.discoveryAndBuildLinks(result);
-      return result;
-    },
-   discoveryAndBuildLinks: function(resource){
-      if (resource == null) return resource;
-      if (typeof(resource) != 'object') return resource;
-      for (var idx in resource){
-        resource[idx] = this.discoveryAndBuildLinks(resource[idx]);
-      }
-      if (resource.link == undefined) return resource;
-
-      if (resource.link.length == undefined ){
-        var link = resource.link;
-        resource.link = new Array();
-        resource.link[0] = link;
-      }
-      resource.links = new Array();
-      for (var i=0;i<resource.link.length;i++){
-        var rel = resource.link[i]["@rel"],
-          href = resource.link[i]["@href"],
-          accept = resource.link[i]["@type"];
-   
-        var linkResource = href;
-        var linkResource = Restfulie.at(href);
-
-        if (accept != null) {
-          linkResource.accepts(accept);
-        }
-        resource.links[rel] = linkResource;
-      }
-      delete resource.link;
-      return resource;
-    }
-  });
-
-   
-     
 
   // function for ajax request
   AjaxRequest = {
@@ -125,14 +18,11 @@ var Restfulie = {};
 	  	});
   	} 
   }  
-
   
   // entry point restfulie
   restfulie.at = function(uri){
     return new EntryPoint(uri);
   }; 
-  
-  
 
   // restfulie class entry point 
   function EntryPoint(uri){
@@ -144,7 +34,7 @@ var Restfulie = {};
     }; 
 
     // Default accepts should add all known media types
-    for (var format in Restfulie.media_types)
+    for (var format in Converters.mediaTypes)
       if ("register getMediaType".indexOf(format)==-1)
         this.headers["Accept"] += (this.headers["Accept"]=='' ? '':', ') +format;
 
@@ -200,7 +90,7 @@ var Restfulie = {};
       if((typeof representation) == "string") {
         content = representation;
       } else {
-        var mediaType = restfulie.media_types.getMediaType(this.headers['Content-Type']);
+        var mediaType = Converters.getMediaType(this.headers['Content-Type']);
         content = mediaType.marshal(representation);
       }
       representation.response = backup;
@@ -241,7 +131,7 @@ var Restfulie = {};
       return addResponseXHR(resource,xhr);
     },
     "200" : function(xhr,entryPoint){
-      var mediaType = restfulie.media_types.getMediaType(xhr.getResponseHeader("Content-Type").split(";")[0]);
+      var mediaType = Converters.getMediaType(xhr.getResponseHeader("Content-Type").split(";")[0]);
       return addResponseXHR(mediaType.unmarshal(xhr),xhr);   
     },
     "201" : function(xhr,entryPoint){
