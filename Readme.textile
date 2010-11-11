@@ -36,10 +36,8 @@ h2. A simple get
 
 h2. A simple post
 
-<pre>	
-	x = {'price':11};
- 	result = Restfulie.at(url).as("application/json").post(x);
-</pre>
+<pre>x = {'price':11};
+result = Restfulie.at(url).as("application/json").post(x);</pre>
 
 h2. Checking the result
 
