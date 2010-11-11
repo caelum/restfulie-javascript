@@ -17,10 +17,8 @@ var XmlConverter = {
   unmarshal : function(request){
     var content = request.responseText;
     if (!content) return {};
-    result = xml2json(parseXml(content), "  ");
-    result = JSON.parse(result);
-    result = this.findAndBuildLinks(result);
-    return result;
+    json = xml2json(parseXml(content), "  ");
+		return this.findAndBuildLinks(JSON.parse(json));
   },
   findAndBuildLinks: function(resource){
     if (!resource) return resource;
@@ -44,7 +42,7 @@ var XmlConverter = {
       var linkResource = href;
       var linkResource = Restfulie.at(href);
 
-      if (accept) {
+      if(accept) {
         linkResource.accepts(accept);
       }
       resource.links[rel] = linkResource;

@@ -6,6 +6,11 @@
   <link rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" type="text/css" media="screen" />
 <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
 <script type="text/javascript" src="../lib/converters.js"></script>
+<script type="text/javascript" src="../lib/json2xml.js"></script>
+<script type="text/javascript" src="../lib/xml2json.js"></script>
+<script type="text/javascript" src="../lib/json2.js"></script>
+
+
 
   <script>
  		 $(document).ready(function(){
@@ -23,9 +28,45 @@
 				  same(PlainConverter, converter, "the default converter must be a PlainConverter" );
 				});
 				
+				module("XMLConverter")
+				
+				test("should marshall my object", function() {
+					var myObject = {
+						name: "Pedro",
+						age: 33
+					}
+					
+					var representationInXML = XmlConverter.marshal(myObject)
+					
+				  equal(representationInXML, "<name>Pedro</name><age>33</age>");
+				});
+				
+				test("should unmarshall my object", function() {
+					var myObject = { user: {
+							name: "Pedro",
+							age: 33
+						}
+					}
+					
+					var obj = XmlConverter.unmarshal({responseText : "<user><name>Pedro</name><age>33</age></user>"})
+				  same(obj, myObject);
+				});
+				
+				test("should build links from a resource ", function() {
+					var myObject = { user: {
+							name: "Pedro",
+							age: 33
+						}
+					}
+					
+					var obj = XmlConverter.findAndBuildLinks(myObject);
+				  same(obj, myObject);
+				});
 				
 				
-	
+				module("XMLConverter")
+				
+				
 		  });
   </script>
   
