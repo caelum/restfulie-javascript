@@ -25,8 +25,8 @@ var XmlConverter = {
   findAndBuildLinks: function(resource){
     if (!resource) return resource;
     if (typeof(resource) != 'object') return resource;
-    for (var idx in resource){
-      resource[idx] = this.findAndBuildLinks(resource[idx]);
+    for (var attribute in resource){
+      resource[attribute] = this.findAndBuildLinks(resource[attribute]);
     }
     if (!resource.link) return resource;
 
@@ -69,8 +69,8 @@ var JsonConverter = {
   findAndBuildLinks: function(resource){
     if (!resource) return resource;
     if (typeof(resource) != 'object') return resource;
-    for (var idx in resource){
-      resource[idx] = this.findAndBuildLinks(resource[idx]);
+    for (var attribute in resource){
+      resource[attribute] = this.findAndBuildLinks(resource[attribute]);
     }
     if (!resource.link) return resource;
 
@@ -99,14 +99,11 @@ var JsonConverter = {
 };
 
 var Converters = {
-
   // registry
-  mediaTypes = {};
-
+  mediaTypes : {},
   register : function(name, converter) {
     mediaTypes[name] = converter
-  }
-
+  },
   getMediaType : function(format){
     var converter = mediaTypes[format];  
     return converter || PlainConverter;

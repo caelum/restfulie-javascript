@@ -1,0 +1,44 @@
+var fs = require('fs');
+var sys = require('sys');
+var jsp = require("uglifyjs/parse-js");
+var pro = require("uglifyjs/process");
+
+desc("build restfulie into one file");
+task('default',['clean', 'build'], function(){
+  console.log('Building Restfulie...');
+});
+
+desc('do the bizness');
+task('build', [], function(){
+  var lib = fs.readdirSync('client/lib/');
+  var originalJSContent = [];
+  for(var i = 0; i < lib.length; i++){
+    if(lib[i].match('.swp')) {continue}
+    console.log("appending " + lib[i]);
+    var data = fs.readFileSync('client/lib/' + lib[i]);
+    fs.createWriteStream('build/restfulie.js', {'flags' : 'a'}).write(data);
+    originalJSContent.push(data);
+  }
+  var js = originalJSContent.join(''); 
+  var ast = jsp.parse(js);
+  ast = pro.ast_mangle(ast);
+  ast = pro.ast_squeeze(ast);
+  var compressedJS = pro.gen_code(ast);
+  fs.createWriteStream('build/restfulie.min.js', {'flags' : 'a'}).write(compressedJS);
+});
+
+desc('clean the artifacts');
+task("clean", [], function(){
+  try{
+    if(fs.readdirSync('build/').some(existRestfulie)){
+      fs.unlinkSync('build/restfulie.js');
+      fs.unlinkSync('build/restfulie.min.js');
+    }
+  }catch(e){
+    fs.mkdirSync('build', 0755);
+  }
+});
+
+function existRestfulie (element, index, array){
+  if(element == 'restfulie.js' || element == 'restfulie.min.js') return true;
+}
