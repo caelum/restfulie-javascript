@@ -18,6 +18,8 @@ Now install UglifyJS:
 
 Run jake to build the Restfulie package uncompressed or minified.
 
+<pre>jake</pre>
+
 To use:
 
 <pre><script type="text/javascript" charset="utf-8" src="build/restfulie.js"></script></pre>
