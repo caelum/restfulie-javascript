@@ -11,28 +11,20 @@ First you got to install "nodejs":http://nodejs.org/#download
 For the next steps you'll need "npm":http://npmjs.org/
 
 With npm installed you must install node-jake:
-<pre>
-  npm install jake
-</pre>
+<pre>npm install jake</pre>
 
 Now install UglifyJS:
-<pre>
-  npm install uglify
-</pre>
+<pre>npm install uglify</pre>
 
 Run jake to build the Restfulie package uncompressed or minified.
 
 To use:
-<pre>
- <script type="text/javascript" charset="utf-8" src="build/restfulie.js"></script>
-</pre>
+
+<pre><script type="text/javascript" charset="utf-8" src="build/restfulie.js"></script></pre>
 
 or :
 
-<pre>
- <script type="text/javascript" charset="utf-8" src="build/restfulie.min.js"></script>
-</pre>
-
+<pre><script type="text/javascript" charset="utf-8" src="build/restfulie.min.js"></script></pre>
 
 This project required jquery your project.
 
