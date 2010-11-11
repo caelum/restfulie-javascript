@@ -32,7 +32,7 @@ This project required jquery your project.
 
 h2. A simple get
 
-resource = Restfulie.at(url).accepts('application/json').get();
+<pre>resource = Restfulie.at(url).accepts('application/json').get();</pre>
 
 h2. A simple post
 
