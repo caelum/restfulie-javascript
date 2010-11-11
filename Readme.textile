@@ -22,11 +22,11 @@ Run jake to build the Restfulie package uncompressed or minified.
 
 To use:
 
-<pre><script type="text/javascript" charset="utf-8" src="build/restfulie.js"></script></pre>
+<pre><script type="text/javascript" charset="utf-8" src="restfulie.js"></script></pre>
 
 or :
 
-<pre><script type="text/javascript" charset="utf-8" src="build/restfulie.min.js"></script></pre>
+<pre><script type="text/javascript" charset="utf-8" src="restfulie.min.js"></script></pre>
 
 This project required jquery your project.
 
