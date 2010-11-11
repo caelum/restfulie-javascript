@@ -97,15 +97,15 @@ var JsonConverter = {
     return resource;
   }
 };
-
+	mediaTypes = {}
 var Converters = {
 
   // registry
-  mediaTypes = {};
+
 
   register : function(name, converter) {
     mediaTypes[name] = converter
-  }
+  },
 
   getMediaType : function(format){
     var converter = mediaTypes[format];  
