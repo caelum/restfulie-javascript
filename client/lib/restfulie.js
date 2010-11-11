@@ -17,7 +17,7 @@ var Restfulie = {};
 	  		async: false
 	  	});
   	} 
-  }  
+  } 
   
   // entry point restfulie
   restfulie.at = function(uri){
@@ -51,37 +51,37 @@ var Restfulie = {};
   	}
     
     // send request get
-    this.request_a = function(method) {
+    this.requestAjax = function(method) {
       var xhr = AjaxRequest.ajax(method,this.uri,'',this.headers);
       return SerializeXHR.serialize(xhr);
     }
     
     // send request get
     this.get = function(){
-      return this.request_a("GET");
+      return this.requestAjax("GET");
   	}
     
     // send request trace
     this.trace = function(){
-      return this.request_a("TRACE");
+      return this.requestAjax("TRACE");
   	}
     
     // send request head
     this.head = function(){
-      return this.request_a("HEAD");
+      return this.requestAjax("HEAD");
   	}
 
     // send request delete
     this._delete = function(){
-      return this.request_a("DELETE");
+      return this.requestAjax("DELETE");
     }
     
     // send request options
     this.options = function(){
-      return this.request_a("OPTIONS");
+      return this.requestAjax("OPTIONS");
   	}
 
-    this.request_with_payload = function(method, representation) {
+    this.requestWithPayload = function(method, representation) {
       var backup;
       var content;
       var xhr;      
@@ -100,17 +100,17 @@ var Restfulie = {};
     
     //send request post
     this.post = function(representation){
-      return this.request_with_payload("POST", representation);
+      return this.requestWithPayload("POST", representation);
     }
 
     //send request patch
     this.patch = function(representation){
-      return this.request_with_payload("PATCH", representation);
+      return this.requestWithPayload("PATCH", representation);
     }
 
     //send request put
     this.put = function(representation){
-      return this.request_with_payload("PUT", representation);
+      return this.requestWithPayload("PUT", representation);
     }
 
   }    
@@ -154,8 +154,7 @@ var Restfulie = {};
         url = linkData[0].trim().replace(/<|>/g, '');
         rel = linkData[1].split('=')[1].replace(/"+/g, '').trim();
         headerLinks[rel] = Restfulie.at(url).accepts(xhr.getResponseHeader("Content-Type").split(";")[0]);
-      }
-      else{
+      }else{
         if (value){
           headers[header] = value.trim();
         }
