@@ -1,12 +1,50 @@
+//Default link Builder, work with json and xml with the same behavior
+var Links = { buildLink: function(resource){
+    if (typeof(resource) != 'object') return resource;
+
+    for (var attribute in resource){
+      resource[attribute] = Links.buildLink(resource[attribute]);
+    }
+
+    if (!resource.link) return resource;
+
+		//checking if the resource is an array or is a literal link, if it's literal transform it in an Array.
+    if (!(resource.link instanceof Array)){
+      var link = resource.link;
+      resource.link = [];
+      resource.link[0] = link;
+    }
+
+    resource.links = {};
+    for (i in resource.link){
+			createRestfulieLinkOn(resource)
+    }
+
+    delete resource.link;
+    return resource;
+	}
+};
+
+var createRestfulieLinkOn = function(resource){
+	var rel = resource.link[i]["rel"],
+  href = resource.link[i]["href"],
+  accept = resource.link[i]["type"];
+
+  var linkResource = Restfulie.at(href);
+
+  if(accept) {
+    linkResource.accepts(accept);
+  }
+  resource.links[rel] = linkResource;
+};
+
+//Converters
 var PlainConverter = {
   marshal : function(object){
     return object;
   },
   unmarshal : function(request){
     return request.responseText;
-  },
-  findAndBuildLinks: function(resource){
-    return resource;
   }
 };
 
@@ -17,40 +55,8 @@ var XmlConverter = {
   unmarshal : function(request){
     var content = request.responseText;
     if (!content) return {};
-    result = xml2json(parseXml(content), "  ");
-    result = JSON.parse(result);
-    result = this.findAndBuildLinks(result);
-    return result;
-  },
-  findAndBuildLinks: function(resource){
-    if (!resource) return resource;
-    if (typeof(resource) != 'object') return resource;
-    for (var attribute in resource){
-      resource[attribute] = this.findAndBuildLinks(resource[attribute]);
-    }
-    if (!resource.link) return resource;
-
-    if (!resource.link.length){
-      var link = resource.link;
-      resource.link = [];
-      resource.link[0] = link;
-    }
-    resource.links = [];
-    for (var i=0;i<resource.link.length;i++){
-      var rel = resource.link[i]["@rel"],
-      href = resource.link[i]["@href"],
-      accept = resource.link[i]["@type"];
-
-      var linkResource = href;
-      var linkResource = Restfulie.at(href);
-
-      if (accept) {
-        linkResource.accepts(accept);
-      }
-      resource.links[rel] = linkResource;
-    }
-    delete resource.link;
-    return resource;
+    json = xml2json(parseXml(content), "  ");
+		return Links.buildLink(JSON.parse(json));
   }
 };
 
@@ -61,55 +67,28 @@ var JsonConverter = {
   unmarshal : function(request){
     var content = request.responseText;
     if (!content) return {};
-    result = JSON.parse(content);
-    result = this.findAndBuildLinks(result);             
-    return result;
-  },
-
-  findAndBuildLinks: function(resource){
-    if (!resource) return resource;
-    if (typeof(resource) != 'object') return resource;
-    for (var attribute in resource){
-      resource[attribute] = this.findAndBuildLinks(resource[attribute]);
-    }
-    if (!resource.link) return resource;
-
-    if (!resource.link.length){
-      var link = resource.link;
-      resource.link = [];
-      resource.link[0] = link;
-    }
-    resource.links = [];
-    for (var i=0;i<resource.link.length;i++){
-      var rel = resource.link[i]["rel"],
-      href = resource.link[i]["href"],
-      accept = resource.link[i]["type"];
-
-      var linkResource = href;
-      var linkResource = Restfulie.at(href);
-
-      if (!accept) {
-        linkResource.accepts(accept);
-      }
-      resource.links[rel] = linkResource;
-    }
-    delete resource.link;
-    return resource;
+    return Links.buildLink(JSON.parse(content));
   }
 };
 
+
+//Converters Registry
+mediaTypes = {}
 var Converters = {
   // registry
   mediaTypes : {},
+
   register : function(name, converter) {
     mediaTypes[name] = converter
   },
+
   getMediaType : function(format){
     var converter = mediaTypes[format];  
     return converter || PlainConverter;
   }
 
 }
+
 
 Converters.register('application/json', JsonConverter);
 Converters.register('text/json', JsonConverter);
@@ -600,51 +579,6 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
         };
     }
 }());
-/*	This work is licensed under Creative Commons GNU LGPL License.
-
-	License: http://creativecommons.org/licenses/LGPL/2.1/
-   Version: 0.9
-	Author:  Stefan Goessner/2006
-	Web:     http://goessner.net/ 
-*/
-function json2xml(o, tab) {
-   var toXml = function(v, name, ind) {
-      var xml = "";
-      if (v instanceof Array) {
-         for (var i=0, n=v.length; i<n; i++)
-            xml += ind + toXml(v[i], name, ind+"\t") + "\n";
-      }
-      else if (typeof(v) == "object") {
-         var hasChild = false;
-         xml += ind + "<" + name;
-         for (var m in v) {
-            if (m.charAt(0) == "@")
-               xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
-            else
-               hasChild = true;
-         }
-         xml += hasChild ? ">" : "/>";
-         if (hasChild) {
-            for (var m in v) {
-               if (m == "#text")
-                  xml += v[m];
-               else if (m == "#cdata")
-                  xml += "<![CDATA[" + v[m] + "]]>";
-               else if (m.charAt(0) != "@")
-                  xml += toXml(v[m], m, ind+"\t");
-            }
-            xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
-         }
-      }
-      else {
-         xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
-      }
-      return xml;
-   }, xml="";
-   for (var m in o)
-      xml += toXml(o[m], m, "");
-   return tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
-}
 var Restfulie = {};
 
 (function(restfulie){
@@ -832,6 +766,51 @@ if(!String.prototype.trim){
   String.prototype.trim = function(){
     this.replace(/^\s+|\s+$/g,'');
   }
+}
+/*	This work is licensed under Creative Commons GNU LGPL License.
+
+	License: http://creativecommons.org/licenses/LGPL/2.1/
+   Version: 0.9
+	Author:  Stefan Goessner/2006
+	Web:     http://goessner.net/ 
+*/
+function json2xml(o, tab) {
+   var toXml = function(v, name, ind) {
+      var xml = "";
+      if (v instanceof Array) {
+         for (var i=0, n=v.length; i<n; i++)
+            xml += ind + toXml(v[i], name, ind+"\t") + "\n";
+      }
+      else if (typeof(v) == "object") {
+         var hasChild = false;
+         xml += ind + "<" + name;
+         for (var m in v) {
+            if (m.charAt(0) == "@")
+               xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
+            else
+               hasChild = true;
+         }
+         xml += hasChild ? ">" : "/>";
+         if (hasChild) {
+            for (var m in v) {
+               if (m == "#text")
+                  xml += v[m];
+               else if (m == "#cdata")
+                  xml += "<![CDATA[" + v[m] + "]]>";
+               else if (m.charAt(0) != "@")
+                  xml += toXml(v[m], m, ind+"\t");
+            }
+            xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
+         }
+      }
+      else {
+         xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
+      }
+      return xml;
+   }, xml="";
+   for (var m in o)
+      xml += toXml(o[m], m, "");
+   return tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
 }
 /*	This work is licensed under Creative Commons GNU LGPL License.
 
