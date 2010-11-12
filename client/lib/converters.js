@@ -29,6 +29,7 @@ var XmlConverter = {
 
     if (!resource.link) return resource;
 
+		//checking if the resource is an array or is a literal link, if it's literal transform it in an Array.
     if (!(resource.link instanceof Array)){
       var link = resource.link;
       resource.link = [];
@@ -36,24 +37,26 @@ var XmlConverter = {
     }
 
     resource.links = {};
-
-    for (var i=0;i < resource.link.length;i++){
-      var rel = resource.link[i]["rel"],
-      href = resource.link[i]["href"],
-      accept = resource.link[i]["type"];
-
-      var linkResource = Restfulie.at(href);
-
-      if(accept) {
-        linkResource.accepts(accept);
-      }
-      resource.links[rel] = linkResource;
+    for (i in resource.link){
+			createRestfulieLinkOn(resource)
     }
 
     delete resource.link;
-
     return resource;
   }
+};
+
+var createRestfulieLinkOn = function(resource){
+	var rel = resource.link[i]["rel"],
+  href = resource.link[i]["href"],
+  accept = resource.link[i]["type"];
+
+  var linkResource = Restfulie.at(href);
+
+  if(accept) {
+    linkResource.accepts(accept);
+  }
+  resource.links[rel] = linkResource;
 };
 
 var JsonConverter = {
