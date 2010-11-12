@@ -1,9 +1,10 @@
 //Default link Builder, work with json and xml with the same behavior
-var Links = { buildLink: function(resource){
+var Links = { 
+  build: function(resource){
     if (typeof(resource) != 'object') return resource;
 
     for (var attribute in resource){
-      resource[attribute] = Links.buildLink(resource[attribute]);
+      resource[attribute] = this.build(resource[attribute]);
     }
 
     if (!resource.link) return resource;
@@ -16,26 +17,26 @@ var Links = { buildLink: function(resource){
     }
 
     resource.links = {};
-    for (i in resource.link){
-			createRestfulieLinkOn(resource)
+    for (var linkName in resource.link){
+			this._createRestfulieLinkOn(resource, linkName);
     }
 
     delete resource.link;
     return resource;
-	}
-};
+	},
 
-var createRestfulieLinkOn = function(resource){
-	var rel = resource.link[i]["rel"],
-  href = resource.link[i]["href"],
-  accept = resource.link[i]["type"];
+  _createRestfulieLinkOn : function(resource, linkName){
+    var rel = resource.link[linkName]["rel"],
+    href = resource.link[linkName]["href"],
+    accept = resource.link[linkName]["type"];
 
-  var linkResource = Restfulie.at(href);
+    var linkResource = Restfulie.at(href);
 
-  if(accept) {
-    linkResource.accepts(accept);
+    if(accept) {
+      linkResource.accepts(accept);
+    }
+    resource.links[rel] = linkResource;
   }
-  resource.links[rel] = linkResource;
 };
 
 //Converters
@@ -55,8 +56,8 @@ var XmlConverter = {
   unmarshal : function(request){
     var content = request.responseText;
     if (!content) return {};
-    json = xml2json(parseXml(content), "  ");
-		return Links.buildLink(JSON.parse(json));
+    var json = xml2json(parseXml(content), "  ");
+		return Links.build(JSON.parse(json));
   }
 };
 
@@ -67,26 +68,24 @@ var JsonConverter = {
   unmarshal : function(request){
     var content = request.responseText;
     if (!content) return {};
-    return Links.buildLink(JSON.parse(content));
+    return Links.build(JSON.parse(content));
   }
 };
 
 
 //Converters Registry
-mediaTypes = {}
 var Converters = {
   // registry
   mediaTypes : {},
 
   register : function(name, converter) {
-    mediaTypes[name] = converter
+    this.mediaTypes[name] = converter
   },
 
   getMediaType : function(format){
-    var converter = mediaTypes[format];  
+    var converter = this.mediaTypes[format];  
     return converter || PlainConverter;
   }
-
 }
 
 

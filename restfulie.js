@@ -1,9 +1,10 @@
 //Default link Builder, work with json and xml with the same behavior
-var Links = { buildLink: function(resource){
+var Links = { 
+  build: function(resource){
     if (typeof(resource) != 'object') return resource;
 
     for (var attribute in resource){
-      resource[attribute] = Links.buildLink(resource[attribute]);
+      resource[attribute] = this.build(resource[attribute]);
     }
 
     if (!resource.link) return resource;
@@ -16,26 +17,26 @@ var Links = { buildLink: function(resource){
     }
 
     resource.links = {};
-    for (i in resource.link){
-			createRestfulieLinkOn(resource)
+    for (var linkName in resource.link){
+			this._createRestfulieLinkOn(resource, linkName);
     }
 
     delete resource.link;
     return resource;
-	}
-};
+	},
 
-var createRestfulieLinkOn = function(resource){
-	var rel = resource.link[i]["rel"],
-  href = resource.link[i]["href"],
-  accept = resource.link[i]["type"];
+  _createRestfulieLinkOn : function(resource, linkName){
+    var rel = resource.link[linkName]["rel"],
+    href = resource.link[linkName]["href"],
+    accept = resource.link[linkName]["type"];
 
-  var linkResource = Restfulie.at(href);
+    var linkResource = Restfulie.at(href);
 
-  if(accept) {
-    linkResource.accepts(accept);
+    if(accept) {
+      linkResource.accepts(accept);
+    }
+    resource.links[rel] = linkResource;
   }
-  resource.links[rel] = linkResource;
 };
 
 //Converters
@@ -55,8 +56,8 @@ var XmlConverter = {
   unmarshal : function(request){
     var content = request.responseText;
     if (!content) return {};
-    json = xml2json(parseXml(content), "  ");
-		return Links.buildLink(JSON.parse(json));
+    var json = xml2json(parseXml(content), "  ");
+		return Links.build(JSON.parse(json));
   }
 };
 
@@ -67,23 +68,22 @@ var JsonConverter = {
   unmarshal : function(request){
     var content = request.responseText;
     if (!content) return {};
-    return Links.buildLink(JSON.parse(content));
+    return Links.build(JSON.parse(content));
   }
 };
 
 
 //Converters Registry
-mediaTypes = {}
 var Converters = {
   // registry
   mediaTypes : {},
 
   register : function(name, converter) {
-    mediaTypes[name] = converter
+    this.mediaTypes[name] = converter
   },
 
   getMediaType : function(format){
-    var converter = mediaTypes[format];  
+    var converter = this.mediaTypes[format];  
     return converter || PlainConverter;
   }
 
@@ -579,6 +579,51 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
         };
     }
 }());
+/*	This work is licensed under Creative Commons GNU LGPL License.
+
+	License: http://creativecommons.org/licenses/LGPL/2.1/
+   Version: 0.9
+	Author:  Stefan Goessner/2006
+	Web:     http://goessner.net/ 
+*/
+function json2xml(o, tab) {
+   var toXml = function(v, name, ind) {
+      var xml = "";
+      if (v instanceof Array) {
+         for (var i=0, n=v.length; i<n; i++)
+            xml += ind + toXml(v[i], name, ind+"\t") + "\n";
+      }
+      else if (typeof(v) == "object") {
+         var hasChild = false;
+         xml += ind + "<" + name;
+         for (var m in v) {
+            if (m.charAt(0) == "@")
+               xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
+            else
+               hasChild = true;
+         }
+         xml += hasChild ? ">" : "/>";
+         if (hasChild) {
+            for (var m in v) {
+               if (m == "#text")
+                  xml += v[m];
+               else if (m == "#cdata")
+                  xml += "<![CDATA[" + v[m] + "]]>";
+               else if (m.charAt(0) != "@")
+                  xml += toXml(v[m], m, ind+"\t");
+            }
+            xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
+         }
+      }
+      else {
+         xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
+      }
+      return xml;
+   }, xml="";
+   for (var m in o)
+      xml += toXml(o[m], m, "");
+   return tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
+}
 var Restfulie = {};
 
 (function(restfulie){
@@ -766,51 +811,6 @@ if(!String.prototype.trim){
   String.prototype.trim = function(){
     this.replace(/^\s+|\s+$/g,'');
   }
-}
-/*	This work is licensed under Creative Commons GNU LGPL License.
-
-	License: http://creativecommons.org/licenses/LGPL/2.1/
-   Version: 0.9
-	Author:  Stefan Goessner/2006
-	Web:     http://goessner.net/ 
-*/
-function json2xml(o, tab) {
-   var toXml = function(v, name, ind) {
-      var xml = "";
-      if (v instanceof Array) {
-         for (var i=0, n=v.length; i<n; i++)
-            xml += ind + toXml(v[i], name, ind+"\t") + "\n";
-      }
-      else if (typeof(v) == "object") {
-         var hasChild = false;
-         xml += ind + "<" + name;
-         for (var m in v) {
-            if (m.charAt(0) == "@")
-               xml += " " + m.substr(1) + "=\"" + v[m].toString() + "\"";
-            else
-               hasChild = true;
-         }
-         xml += hasChild ? ">" : "/>";
-         if (hasChild) {
-            for (var m in v) {
-               if (m == "#text")
-                  xml += v[m];
-               else if (m == "#cdata")
-                  xml += "<![CDATA[" + v[m] + "]]>";
-               else if (m.charAt(0) != "@")
-                  xml += toXml(v[m], m, ind+"\t");
-            }
-            xml += (xml.charAt(xml.length-1)=="\n"?ind:"") + "</" + name + ">";
-         }
-      }
-      else {
-         xml += ind + "<" + name + ">" + v.toString() +  "</" + name + ">";
-      }
-      return xml;
-   }, xml="";
-   for (var m in o)
-      xml += toXml(o[m], m, "");
-   return tab ? xml.replace(/\t/g, tab) : xml.replace(/\t|\n/g, "");
 }
 /*	This work is licensed under Creative Commons GNU LGPL License.
 

@@ -15,7 +15,6 @@
 					var MyConverter = {};
 					Converters.register('application/mytype', MyConverter);
 			
-					var converter = Converters.getMediaType('application/mytype');
 				  same(MyConverter, Converters.getMediaType('application/mytype'));
 				});
 
@@ -24,12 +23,11 @@
 				  same(PlainConverter, converter, "the default converter must be a PlainConverter" );
 				});
 				
-				
 				//LINKS			
 				module("Building Links")
 
 				test("should return the resource if the resource isn't an object ", function() {
-				  equals(Links.buildLink(undefined), undefined);
+				  equals(Links.build(undefined), undefined);
 				});
 
 				test("should build one link", function() {
@@ -42,7 +40,7 @@
 						}
 					};
 
-					resource = Links.buildLink(objWithLink);
+					var resource = Links.build(objWithLink);
 				  equals(resource.links["payment"].uri, "http://payment.com");
 				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
 
@@ -61,7 +59,7 @@
 						}
 					};
 
-					resource = Links.buildLink(deepObject);
+					var resource = Links.build(deepObject);
 					equals(resource.user.creditCard.links["refund"].headers.Accept, "application/refundtype");
 					equals(resource.user.creditCard.links["refund"].uri, "http://myCreditCard.com");
 				});
@@ -82,7 +80,7 @@
 						}]
 					};
 
-					resource = Links.buildLink(objWithLinks);
+					var resource = Links.build(objWithLinks);
 				  equals(resource.links["payment"].uri, "http://payment.com");
 				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
 
@@ -94,7 +92,7 @@
 				//XMLCONVERTER			
 				module("XMLConverter")
 				
-				test("should marshall my object", function() {
+				test("should marshal my object", function() {
 					var myObject = {
 						name: "Pedro",
 						age: 33
@@ -105,7 +103,7 @@
 				  equal(representationInXML, "<name>Pedro</name><age>33</age>");
 				});
 				
-				test("should unmarshall my object", function() {
+				test("should unmarshal my object", function() {
 					var myObject = { user: {
 							name: "Pedro",
 							age: 33
@@ -117,7 +115,7 @@
 				});
 				
 				
-				test("should unmarshall my object with links", function() {
+				test("should unmarshal my object with links", function() {
 					var myObject = { user: {
 							name: "Pedro",
 							age: 33,
@@ -134,7 +132,7 @@
 				//JSONCONVERTER			
 				module("JSONConverter")
 				
-				test("should marshall my object", function() {
+				test("should marshal my object", function() {
 					var myObject = {
 						name: "Pedro",
 						age: 33
@@ -143,7 +141,7 @@
 				  equal(JsonConverter.marshal(myObject), '{"name":"Pedro","age":33}');
 				});
 				
-				test("should unmarshall my object", function() {
+				test("should unmarshal my object", function() {
 					var myObject = {
 							name: "Pedro",
 							age: 33
@@ -154,7 +152,7 @@
 				});
 				
 		
-				test("should unmarshall my object with links", function() {
+				test("should unmarshal my object with links", function() {
 					var myObject = {
 							name: "Pedro",
 							age: 33,
@@ -166,8 +164,6 @@
 					var obj = JsonConverter.unmarshal({responseText : '{"name":"Pedro","age":33,"link":{"rel":"payment","href":"http://localhost:8080"}}'});
 				  same(obj, myObject);
 				});
-				
-										
 		  });
   </script>
   
