@@ -16,6 +16,7 @@
 
   <script>
  		 $(document).ready(function(){
+			//Converter registry
 			 module("Registering Converters")
 		   test("should register a new converter", function() {
 					var MyConverter = {};
@@ -31,6 +32,73 @@
 				});
 				
 				
+				//LINKS			
+				module("Building Links")
+
+				test("should return the resource if the resource isn't an object ", function() {
+				  equals(Links.buildLink(undefined), undefined);
+				});
+
+				test("should build one link", function() {
+
+					var objWithLink = {
+						link: {
+							rel: "payment",
+							href: "http://payment.com",
+							type: "application/paymenttype"
+						}
+					};
+
+					resource = Links.buildLink(objWithLink);
+				  equals(resource.links["payment"].uri, "http://payment.com");
+				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
+
+				});
+
+				test("should build link with deep objects", function() {
+
+					var deepObject = { user: {
+						creditCard:{
+								link: {
+									rel: "refund",
+									href: "http://myCreditCard.com",
+									type: "application/refundtype"
+								}		
+							}				
+						}
+					};
+
+					resource = Links.buildLink(deepObject);
+					equals(resource.user.creditCard.links["refund"].headers.Accept, "application/refundtype");
+					equals(resource.user.creditCard.links["refund"].uri, "http://myCreditCard.com");
+				});
+
+				test("should build more than one links ", function() {
+
+					var objWithLinks = {
+						link: [{
+							rel: "payment",
+							href: "http://payment.com",
+							type: "application/paymenttype"
+						},
+
+						{
+							rel: "deliver",
+							href: "http://deliver.com",
+							type: "application/delivertype"
+						}]
+					};
+
+					resource = Links.buildLink(objWithLinks);
+				  equals(resource.links["payment"].uri, "http://payment.com");
+				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
+
+					equals(resource.links["deliver"].uri, "http://deliver.com");
+					equals(resource.links["deliver"].headers.Accept, "application/delivertype");
+
+				});
+					
+				//XMLCONVERTER			
 				module("XMLConverter")
 				
 				test("should marshall my object", function() {
@@ -70,68 +138,42 @@
 				  same(obj, myObject);
 				});
 				
-				test("should return the resource if the resource isn't an object ", function() {
-				  equals(XmlConverter.findAndBuildLinks(undefined), undefined);
+				//JSONCONVERTER			
+				module("JSONConverter")
+				
+				test("should marshall my object", function() {
+					var myObject = {
+						name: "Pedro",
+						age: 33
+					}
+
+				  equal(JsonConverter.marshal(myObject), '{"name":"Pedro","age":33}');
 				});
 				
-				test("should build one link", function() {
+				test("should unmarshall my object", function() {
+					var myObject = {
+							name: "Pedro",
+							age: 33
+					}
 
-					var objWithLink = {
-						link: {
-							rel: "payment",
-							href: "http://payment.com",
-							type: "application/paymenttype"
-						}
+					var obj = JsonConverter.unmarshal({responseText : '{"name":"Pedro","age":33}'})
+				  same(obj, myObject);
+				});
+				
+		
+				test("should unmarshall my object with links", function() {
+					var myObject = {
+							name: "Pedro",
+							age: 33,
+							links: { 
+								payment:	Restfulie.at("http://localhost:8080")
+							}
 					};
 
-					resource = XmlConverter.findAndBuildLinks(objWithLink);
-				  equals(resource.links["payment"].uri, "http://payment.com");
-				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
-
+					var obj = JsonConverter.unmarshal({responseText : '{"name":"Pedro","age":33,"link":{"rel":"payment","href":"http://localhost:8080"}}'});
+				  same(obj, myObject);
 				});
 				
-				test("should build link with deep objects", function() {
-
-					var deepObject = { user: {
-						creditCard:{
-								link: {
-									rel: "refund",
-									href: "http://myCreditCard.com",
-									type: "application/refundtype"
-								}		
-							}				
-						}
-					};
-
-					resource = XmlConverter.findAndBuildLinks(deepObject);
-					equals(resource.user.creditCard.links["refund"].headers.Accept, "application/refundtype");
-					equals(resource.user.creditCard.links["refund"].uri, "http://myCreditCard.com");
-				});
-				
-				test("should build more than one links ", function() {
-					
-					var objWithLinks = {
-						link: [{
-							rel: "payment",
-							href: "http://payment.com",
-							type: "application/paymenttype"
-						},
-						
-						{
-							rel: "deliver",
-							href: "http://deliver.com",
-							type: "application/delivertype"
-						}]
-					};
-					
-					resource = XmlConverter.findAndBuildLinks(objWithLinks);
-				  equals(resource.links["payment"].uri, "http://payment.com");
-				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
-				
-					equals(resource.links["deliver"].uri, "http://deliver.com");
-					equals(resource.links["deliver"].headers.Accept, "application/delivertype");
-				
-				});
 										
 		  });
   </script>

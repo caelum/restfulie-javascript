@@ -1,30 +1,9 @@
-var PlainConverter = {
-  marshal : function(object){
-    return object;
-  },
-  unmarshal : function(request){
-    return request.responseText;
-  },
-  findAndBuildLinks: function(resource){
-    return resource;
-  }
-};
-
-var XmlConverter = {
-  marshal : function(object){
-    return json2xml(object);
-  },
-  unmarshal : function(request){
-    var content = request.responseText;
-    if (!content) return {};
-    json = xml2json(parseXml(content), "  ");
-		return this.findAndBuildLinks(JSON.parse(json));
-  },
-  findAndBuildLinks: function(resource){
+//Default link Builder, work with json and xml with the same behavior
+var Links = { buildLink: function(resource){
     if (typeof(resource) != 'object') return resource;
 
     for (var attribute in resource){
-      resource[attribute] = this.findAndBuildLinks(resource[attribute]);
+      resource[attribute] = Links.buildLink(resource[attribute]);
     }
 
     if (!resource.link) return resource;
@@ -43,7 +22,7 @@ var XmlConverter = {
 
     delete resource.link;
     return resource;
-  }
+	}
 };
 
 var createRestfulieLinkOn = function(resource){
@@ -59,6 +38,28 @@ var createRestfulieLinkOn = function(resource){
   resource.links[rel] = linkResource;
 };
 
+//Converters
+var PlainConverter = {
+  marshal : function(object){
+    return object;
+  },
+  unmarshal : function(request){
+    return request.responseText;
+  }
+};
+
+var XmlConverter = {
+  marshal : function(object){
+    return json2xml(object);
+  },
+  unmarshal : function(request){
+    var content = request.responseText;
+    if (!content) return {};
+    json = xml2json(parseXml(content), "  ");
+		return Links.buildLink(JSON.parse(json));
+  }
+};
+
 var JsonConverter = {
   marshal : function(object){
     return JSON.stringify(object);
@@ -66,43 +67,13 @@ var JsonConverter = {
   unmarshal : function(request){
     var content = request.responseText;
     if (!content) return {};
-    result = JSON.parse(content);
-    result = this.findAndBuildLinks(result);             
-    return result;
-  },
-
-  findAndBuildLinks: function(resource){
-    if (!resource) return resource;
-    if (typeof(resource) != 'object') return resource;
-    for (var attribute in resource){
-      resource[attribute] = this.findAndBuildLinks(resource[attribute]);
-    }
-    if (!resource.link) return resource;
-
-    if (!resource.link.length){
-      var link = resource.link;
-      resource.link = [];
-      resource.link[0] = link;
-    }
-    resource.links = [];
-    for (var i=0;i<resource.link.length;i++){
-      var rel = resource.link[i]["rel"],
-      href = resource.link[i]["href"],
-      accept = resource.link[i]["type"];
-
-      var linkResource = href;
-      var linkResource = Restfulie.at(href);
-
-      if (!accept) {
-        linkResource.accepts(accept);
-      }
-      resource.links[rel] = linkResource;
-    }
-    delete resource.link;
-    return resource;
+    return Links.buildLink(JSON.parse(content));
   }
 };
-	mediaTypes = {}
+
+
+//Converters Registry
+mediaTypes = {}
 var Converters = {
   // registry
   mediaTypes : {},
@@ -117,6 +88,7 @@ var Converters = {
   }
 
 }
+
 
 Converters.register('application/json', JsonConverter);
 Converters.register('text/json', JsonConverter);
