@@ -9,12 +9,14 @@
 <script type="text/javascript" src="../lib/json2xml.js"></script>
 <script type="text/javascript" src="../lib/xml2json.js"></script>
 <script type="text/javascript" src="../lib/json2.js"></script>
+<script type="text/javascript" src="../lib/restfulie.js"></script>
+
 
 
 
   <script>
  		 $(document).ready(function(){
-			 module("Register Converters")
+			 module("Registering Converters")
 		   test("should register a new converter", function() {
 					var MyConverter = {};
 					Converters.register('application/mytype', MyConverter);
@@ -27,6 +29,7 @@
 					var converter = Converters.getMediaType('nonexistent/type');
 				  same(PlainConverter, converter, "the default converter must be a PlainConverter" );
 				});
+				
 				
 				module("XMLConverter")
 				
@@ -52,21 +55,84 @@
 				  same(obj, myObject);
 				});
 				
-				test("should build links from a resource ", function() {
+				
+				test("should unmarshall my object with links", function() {
 					var myObject = { user: {
 							name: "Pedro",
-							age: 33
+							age: 33,
+							links: { 
+								payment:	Restfulie.at("http://localhost:8080")
+							}
 						}
 					}
 					
-					var obj = XmlConverter.findAndBuildLinks(myObject);
+					var obj = XmlConverter.unmarshal({responseText : "<user><name>Pedro</name><age>33</age><link><rel>payment</rel><href>http://localhost:8080</href></link></user>"})
 				  same(obj, myObject);
 				});
 				
+				test("should return the resource if the resource isn't an object ", function() {
+				  equals(XmlConverter.findAndBuildLinks(undefined), undefined);
+				});
 				
-				module("XMLConverter")
+				test("should build one link", function() {
+
+					var objWithLink = {
+						link: {
+							rel: "payment",
+							href: "http://payment.com",
+							type: "application/paymenttype"
+						}
+					};
+
+					resource = XmlConverter.findAndBuildLinks(objWithLink);
+				  equals(resource.links["payment"].uri, "http://payment.com");
+				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
+
+				});
 				
+				test("should build link with deep objects", function() {
+
+					var deepObject = { user: {
+						creditCard:{
+								link: {
+									rel: "refund",
+									href: "http://myCreditCard.com",
+									type: "application/refundtype"
+								}		
+							}				
+						}
+					};
+
+					resource = XmlConverter.findAndBuildLinks(deepObject);
+					equals(resource.user.creditCard.links["refund"].headers.Accept, "application/refundtype");
+					equals(resource.user.creditCard.links["refund"].uri, "http://myCreditCard.com");
+				});
 				
+				test("should build more than one links ", function() {
+					
+					var objWithLinks = {
+						link: [{
+							rel: "payment",
+							href: "http://payment.com",
+							type: "application/paymenttype"
+						},
+						
+						{
+							rel: "deliver",
+							href: "http://deliver.com",
+							type: "application/delivertype"
+						}]
+					};
+					
+					resource = XmlConverter.findAndBuildLinks(objWithLinks);
+				  equals(resource.links["payment"].uri, "http://payment.com");
+				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
+				
+					equals(resource.links["deliver"].uri, "http://deliver.com");
+					equals(resource.links["deliver"].headers.Accept, "application/delivertype");
+				
+				});
+										
 		  });
   </script>
   

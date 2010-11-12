@@ -21,25 +21,27 @@ var XmlConverter = {
 		return this.findAndBuildLinks(JSON.parse(json));
   },
   findAndBuildLinks: function(resource){
-    if (!resource) return resource;
     if (typeof(resource) != 'object') return resource;
+
     for (var attribute in resource){
       resource[attribute] = this.findAndBuildLinks(resource[attribute]);
     }
+
     if (!resource.link) return resource;
 
-    if (!resource.link.length){
+    if (!(resource.link instanceof Array)){
       var link = resource.link;
       resource.link = [];
       resource.link[0] = link;
     }
-    resource.links = [];
-    for (var i=0;i<resource.link.length;i++){
-      var rel = resource.link[i]["@rel"],
-      href = resource.link[i]["@href"],
-      accept = resource.link[i]["@type"];
 
-      var linkResource = href;
+    resource.links = {};
+
+    for (var i=0;i < resource.link.length;i++){
+      var rel = resource.link[i]["rel"],
+      href = resource.link[i]["href"],
+      accept = resource.link[i]["type"];
+
       var linkResource = Restfulie.at(href);
 
       if(accept) {
@@ -47,7 +49,9 @@ var XmlConverter = {
       }
       resource.links[rel] = linkResource;
     }
+
     delete resource.link;
+
     return resource;
   }
 };
