@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <link rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
+<script type="text/javascript" src="../lib/converters.js"></script>
+<script type="text/javascript" src="../lib/json2xml.js"></script>
+<script type="text/javascript" src="../lib/xml2json.js"></script>
+<script type="text/javascript" src="../lib/json2.js"></script>
+<script type="text/javascript" src="../lib/restfulie.js"></script>
+
+
+
+
+  <script>
+ 		 $(document).ready(function(){
+			//Converter registry
+			 module("Registering Converters")
+		   test("should register a new converter", function() {
+					var MyConverter = {};
+					Converters.register('application/mytype', MyConverter);
+			
+					var converter = Converters.getMediaType('application/mytype');
+				  same(MyConverter, Converters.getMediaType('application/mytype'));
+				});
+
+			  test("when my converter doesn't exists return the PlainConverter", function() {
+					var converter = Converters.getMediaType('nonexistent/type');
+				  same(PlainConverter, converter, "the default converter must be a PlainConverter" );
+				});
+				
+				
+				//LINKS			
+				module("Building Links")
+
+				test("should return the resource if the resource isn't an object ", function() {
+				  equals(Links.buildLink(undefined), undefined);
+				});
+
+				test("should build one link", function() {
+
+					var objWithLink = {
+						link: {
+							rel: "payment",
+							href: "http://payment.com",
+							type: "application/paymenttype"
+						}
+					};
+
+					resource = Links.buildLink(objWithLink);
+				  equals(resource.links["payment"].uri, "http://payment.com");
+				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
+
+				});
+
+				test("should build link with deep objects", function() {
+
+					var deepObject = { user: {
+						creditCard:{
+								link: {
+									rel: "refund",
+									href: "http://myCreditCard.com",
+									type: "application/refundtype"
+								}		
+							}				
+						}
+					};
+
+					resource = Links.buildLink(deepObject);
+					equals(resource.user.creditCard.links["refund"].headers.Accept, "application/refundtype");
+					equals(resource.user.creditCard.links["refund"].uri, "http://myCreditCard.com");
+				});
+
+				test("should build more than one links ", function() {
+
+					var objWithLinks = {
+						link: [{
+							rel: "payment",
+							href: "http://payment.com",
+							type: "application/paymenttype"
+						},
+
+						{
+							rel: "deliver",
+							href: "http://deliver.com",
+							type: "application/delivertype"
+						}]
+					};
+
+					resource = Links.buildLink(objWithLinks);
+				  equals(resource.links["payment"].uri, "http://payment.com");
+				  equals(resource.links["payment"].headers.Accept, "application/paymenttype");
+
+					equals(resource.links["deliver"].uri, "http://deliver.com");
+					equals(resource.links["deliver"].headers.Accept, "application/delivertype");
+
+				});
+					
+				//XMLCONVERTER			
+				module("XMLConverter")
+				
+				test("should marshall my object", function() {
+					var myObject = {
+						name: "Pedro",
+						age: 33
+					}
+					
+					var representationInXML = XmlConverter.marshal(myObject)
+					
+				  equal(representationInXML, "<name>Pedro</name><age>33</age>");
+				});
+				
+				test("should unmarshall my object", function() {
+					var myObject = { user: {
+							name: "Pedro",
+							age: 33
+						}
+					}
+					
+					var obj = XmlConverter.unmarshal({responseText : "<user><name>Pedro</name><age>33</age></user>"})
+				  same(obj, myObject);
+				});
+				
+				
+				test("should unmarshall my object with links", function() {
+					var myObject = { user: {
+							name: "Pedro",
+							age: 33,
+							links: { 
+								payment:	Restfulie.at("http://localhost:8080")
+							}
+						}
+					}
+					
+					var obj = XmlConverter.unmarshal({responseText : "<user><name>Pedro</name><age>33</age><link><rel>payment</rel><href>http://localhost:8080</href></link></user>"})
+				  same(obj, myObject);
+				});
+				
+				//JSONCONVERTER			
+				module("JSONConverter")
+				
+				test("should marshall my object", function() {
+					var myObject = {
+						name: "Pedro",
+						age: 33
+					}
+
+				  equal(JsonConverter.marshal(myObject), '{"name":"Pedro","age":33}');
+				});
+				
+				test("should unmarshall my object", function() {
+					var myObject = {
+							name: "Pedro",
+							age: 33
+					}
+
+					var obj = JsonConverter.unmarshal({responseText : '{"name":"Pedro","age":33}'})
+				  same(obj, myObject);
+				});
+				
+		
+				test("should unmarshall my object with links", function() {
+					var myObject = {
+							name: "Pedro",
+							age: 33,
+							links: { 
+								payment:	Restfulie.at("http://localhost:8080")
+							}
+					};
+
+					var obj = JsonConverter.unmarshal({responseText : '{"name":"Pedro","age":33,"link":{"rel":"payment","href":"http://localhost:8080"}}'});
+				  same(obj, myObject);
+				});
+				
+										
+		  });
+  </script>
+  
+</head>
+<body>
+  <h1 id="qunit-header">Converters Test</h1>
+ <h2 id="qunit-banner"></h2>
+ <div id="qunit-testrunner-toolbar"></div>
+ <h2 id="qunit-userAgent"></h2>
+ <ol id="qunit-tests"></ol>
+ <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
