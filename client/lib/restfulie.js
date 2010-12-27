@@ -131,8 +131,8 @@ var Restfulie = {};
       return addResponseXHR(resource,xhr);
     },
     "200" : function(xhr,entryPoint){
-      var mediaType = Converters.getMediaType(xhr.getResponseHeader("Content-Type").split(";")[0]);
-      return addResponseXHR(mediaType.unmarshal(xhr),xhr);   
+	  var resource = {};
+      return addResponseXHR(resource, xhr);   
     },
     "201" : function(xhr,entryPoint){
       var location = xhr.getResponseHeader("Location");
@@ -166,10 +166,13 @@ var Restfulie = {};
   
   // decorator object adicional info request
   function addResponseXHR(resource,xhr){
-    resource.response = {};
-    resource.response.body = xhr.responseText;
-    resource.response.code = xhr.status;
-    resource.response.headers = getResponseHeadersFrom(xhr);
+    resource.body = xhr.responseText;
+    resource.code = xhr.status;
+    resource.headers = getResponseHeadersFrom(xhr);
+    resource.resource = function() {
+	  var mediaType = Converters.getMediaType(xhr.getResponseHeader("Content-Type").split(";")[0]);
+      return mediaType.unmarshal(xhr);
+    }
     return resource;
   }  
 
