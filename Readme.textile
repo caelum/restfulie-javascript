@@ -2,8 +2,6 @@ h1. Restfulie Javascript
 
 "Visit the official website":http://restfulie.caelumobjects.com for <b>documentation</b>, videos and other versions. 
 
-h1. Importing
-
 <pre><script type="text/javascript" charset="utf-8" src="restfulie.js"></script></pre>
 
 or :
