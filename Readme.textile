@@ -1,26 +1,7 @@
 h1. Restfulie Javascript
 
-Restfulie javascript port is in its earlier stages. Wait a while for some extra information and docs.
+"Visit the official website":http://restfulie.caelumobjects.com for <b>documentation</b>, videos and other versions. 
 
-Meanwhile visit "Restfulie's website":http://restfulie.caelumobjects.com
-
-h1. How to build 
-
-First you got to install "nodejs":http://nodejs.org/#download
-
-For the next steps you'll need "npm":http://npmjs.org/
-
-With npm installed you must install node-jake:
-<pre>npm install jake</pre>
-
-Now install UglifyJS:
-<pre>npm install uglify</pre>
-
-Run jake to build the Restfulie package uncompressed or minified.
-
-<pre>jake</pre>
-
-To use:
 
 <pre><script type="text/javascript" charset="utf-8" src="restfulie.js"></script></pre>
 
@@ -55,10 +36,29 @@ Restfulie Javascript was created by "Carlos Alberto":http://progdicas.blogspot.c
 
 "Guilherme Silveira":http://restfulie.caelumobjects.com (Restfulie project leader)
 "Ricardo Valeriano":http://www.ricardovaleriano.com.br
+"Caires Santos":"http://twitter.com/cairesvs"
 
-h2. More info
+h1. How to build for development
 
-Do not forget "to visit the official website":http://restfulie.caelumobjects.com for videos and other versions.
+First you got to install "nodejs":http://nodejs.org/#download
+
+For the next steps you'll need "npm":http://npmjs.org/
+
+With npm installed you must install node-jake:
+<pre>npm install jake</pre>
+
+Now install UglifyJS:
+<pre>npm install uglify</pre>
+
+Run jake to build the Restfulie package uncompressed or minified.
+
+<pre>jake</pre>
+
+h2. Testing
+
+To run your tests execute:
+
+<pre>open client/tests/convertersTest.html</pre>
 
 h1. License
 
