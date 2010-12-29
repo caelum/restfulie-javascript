@@ -6,7 +6,7 @@ load('spec/lib/jspec.js')
 load('spec/lib/jspec.xhr.js')
 load('spec/lib/jspec.jquery.js')
 
-load('../restfulie.js')
+load('javascripts/restfulie.js')
 		
 load('spec/unit/spec.helper.js')
 

@@ -659,10 +659,10 @@ var Restfulie = {};
     }; 
 
     // Default accepts should add all known media types
-    for (var format in Converters.mediaTypes)
+    for (var format in Converters.mediaTypes){
       if ("register getMediaType".indexOf(format)==-1)
         this.headers["Accept"] += (this.headers["Accept"]=='' ? '':', ') +format;
-
+    }
 
     // configure accept
     this.accepts = function(accept){
@@ -767,18 +767,17 @@ var Restfulie = {};
   }
 
   function getResponseHeadersFrom(xhr) {
-    headers = {};
-    headerLinks = {};
-    console.log(xhr.getAllResponseHeaders());
-    responseHeaders = xhr.getAllResponseHeaders().split("\n");
+    var headers = {};
+    var headerLinks = {};
+    var responseHeaders = xhr.getAllResponseHeaders().split("\n");
     for(headerName in responseHeaders){
-      headerData = responseHeaders[headerName].split(':');
-      header = headerData[0];
-      value = headerData[1];
+      var headerData = responseHeaders[headerName].split(':');
+      var header = headerData[0];
+      var value = headerData[1];
       if (header == 'Link'){
-        linkData = value.split(";");
-        url = linkData[0].trim().replace(/<|>/g, '');
-        rel = linkData[1].split('=')[1].replace(/"+/g, '').trim();
+        var linkData = value.split(";");
+        var url = linkData[0].trim().replace(/<|>/g, '');
+        var rel = linkData[1].split('=')[1].replace(/"+/g, '').trim();
         headerLinks[rel] = Restfulie.at(url).accepts(xhr.getResponseHeader("Content-Type").split(";")[0]);
       }else{
         if (value){
