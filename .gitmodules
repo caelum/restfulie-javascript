@@ -1,3 +1,3 @@
 [submodule "server"]
 	path = server
-	url = git://github.com/caelum/restfulie-full-examples.git
+	url = git://github.com/caelum/restfulie-restbuy.git
