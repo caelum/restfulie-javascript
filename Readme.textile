@@ -35,7 +35,7 @@ Restfulie Javascript was created by "Carlos Alberto":http://progdicas.blogspot.c
 
 "Guilherme Silveira":http://restfulie.caelumobjects.com (Restfulie project leader)
 "Ricardo Valeriano":http://www.ricardovaleriano.com.br
-"Caires Santos":"http://twitter.com/cairesvs"
+"Caires Santos":http://twitter.com/cairesvs
 
 h1. How to build for development
 
