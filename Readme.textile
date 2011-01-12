@@ -55,9 +55,19 @@ Run jake to build the Restfulie package uncompressed or minified.
 
 h2. Testing
 
-To run your tests execute:
+To run your unit tests execute:
 
 <pre>open client/tests/convertersTest.html</pre>
+
+For integration tests:
+
+h3. Restbuy and Proxifier
+
+First things first execute <pre>git submodule init</pre> and <pre>git submodule update</pre> after that <pre>bundle install</pre> to grab all the gems.
+
+Go to Proxifier dir and execute <pre>bundle install</pre>.  
+
+Be sure you have "Restbuy":https://github.com/caelum/restfulie-restbuy and Proxifier running properly and after that just execute <pre>test.sh</pre> script 
 
 h1. License
 
