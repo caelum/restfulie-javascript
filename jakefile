@@ -1,7 +1,8 @@
 var fs = require('fs');
 var sys = require('sys');
-var jsp = require("uglifyjs/parse-js");
-var pro = require("uglifyjs/process");
+var uglify = require('uglify');
+var jsp = uglify.parser;
+var pro = uglify.uglify;
 
 desc("build restfulie into one file");
 task('default',['clean', 'build'], function(){
